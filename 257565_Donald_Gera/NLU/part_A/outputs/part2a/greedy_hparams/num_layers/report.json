@@ -1,0 +1,376 @@
+{
+    "experiment_name": "greedy_num_layers",
+    "parameter_name": "num_layers",
+    "candidate_values": [
+        1,
+        2,
+        3,
+        4
+    ],
+    "runs_per_config": 5,
+    "seed": 42,
+    "data_seed": 42,
+    "dataset_dir": "dataset/ATIS",
+    "selection_metric": "slot_f1",
+    "fixed_training_hyperparameters": {
+        "train_batch_size": 128,
+        "eval_batch_size": 64,
+        "n_epochs": 200,
+        "patience": 3,
+        "eval_every": 5,
+        "weight_decay": 0.01,
+        "optimizer": "AdamW"
+    },
+    "base_model_config": {
+        "pos_emb_size": 1024,
+        "d_model": 80,
+        "n_heads": 1,
+        "num_layers": 1,
+        "ff_dim": 20,
+        "dropout": 0.0
+    },
+    "base_learning_rate": 0.005,
+    "results": [
+        {
+            "value": 1,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 80,
+                "n_heads": 1,
+                "num_layers": 1,
+                "ff_dim": 20,
+                "dropout": 0.0
+            },
+            "learning_rate": 0.005,
+            "dev": {
+                "slot_f1": {
+                    "mean": 0.9451263523512589,
+                    "std": 0.003995940882625811
+                },
+                "intent_acc": {
+                    "mean": 0.9662650602409639,
+                    "std": 0.006273292912374819
+                },
+                "selection_score": {
+                    "mean": 0.9451263523512589,
+                    "std": 0.003995940882625811
+                }
+            },
+            "runs": [
+                {
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 35,
+                    "dev_slot_f1": 0.9443298969072164,
+                    "dev_intent_acc": 0.9598393574297188,
+                    "selection_score": 0.9443298969072164,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_1\\run_01_seed_42\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_1\\run_01_seed_42\\history.png"
+                },
+                {
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 45,
+                    "dev_slot_f1": 0.950220913107511,
+                    "dev_intent_acc": 0.9698795180722891,
+                    "selection_score": 0.950220913107511,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_1\\run_02_seed_43\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_1\\run_02_seed_43\\history.png"
+                },
+                {
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 60,
+                    "dev_slot_f1": 0.9471210340775558,
+                    "dev_intent_acc": 0.9738955823293173,
+                    "selection_score": 0.9471210340775558,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_1\\run_03_seed_44\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_1\\run_03_seed_44\\history.png"
+                },
+                {
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 55,
+                    "dev_slot_f1": 0.9458186101295643,
+                    "dev_intent_acc": 0.9698795180722891,
+                    "selection_score": 0.9458186101295643,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_1\\run_04_seed_45\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_1\\run_04_seed_45\\history.png"
+                },
+                {
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 30,
+                    "dev_slot_f1": 0.9381413075344474,
+                    "dev_intent_acc": 0.9578313253012049,
+                    "selection_score": 0.9381413075344474,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_1\\run_05_seed_46\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_1\\run_05_seed_46\\history.png"
+                }
+            ]
+        },
+        {
+            "value": 2,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 80,
+                "n_heads": 1,
+                "num_layers": 2,
+                "ff_dim": 20,
+                "dropout": 0.0
+            },
+            "learning_rate": 0.005,
+            "dev": {
+                "slot_f1": {
+                    "mean": 0.9451208039180286,
+                    "std": 0.0023631022774642883
+                },
+                "intent_acc": {
+                    "mean": 0.9666666666666668,
+                    "std": 0.006791780933850516
+                },
+                "selection_score": {
+                    "mean": 0.9451208039180286,
+                    "std": 0.0023631022774642883
+                }
+            },
+            "runs": [
+                {
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 40,
+                    "dev_slot_f1": 0.9473064468648806,
+                    "dev_intent_acc": 0.9578313253012049,
+                    "selection_score": 0.9473064468648806,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_2\\run_01_seed_42\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_2\\run_01_seed_42\\history.png"
+                },
+                {
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 55,
+                    "dev_slot_f1": 0.9479258605472197,
+                    "dev_intent_acc": 0.9738955823293173,
+                    "selection_score": 0.9479258605472197,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_2\\run_02_seed_43\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_2\\run_02_seed_43\\history.png"
+                },
+                {
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 45,
+                    "dev_slot_f1": 0.9422117923144617,
+                    "dev_intent_acc": 0.9738955823293173,
+                    "selection_score": 0.9422117923144617,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_2\\run_03_seed_44\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_2\\run_03_seed_44\\history.png"
+                },
+                {
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 40,
+                    "dev_slot_f1": 0.9456042340488092,
+                    "dev_intent_acc": 0.9678714859437751,
+                    "selection_score": 0.9456042340488092,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_2\\run_04_seed_45\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_2\\run_04_seed_45\\history.png"
+                },
+                {
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 55,
+                    "dev_slot_f1": 0.9425556858147713,
+                    "dev_intent_acc": 0.9598393574297188,
+                    "selection_score": 0.9425556858147713,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_2\\run_05_seed_46\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_2\\run_05_seed_46\\history.png"
+                }
+            ]
+        },
+        {
+            "value": 3,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 80,
+                "n_heads": 1,
+                "num_layers": 3,
+                "ff_dim": 20,
+                "dropout": 0.0
+            },
+            "learning_rate": 0.005,
+            "dev": {
+                "slot_f1": {
+                    "mean": 0.9454840675914195,
+                    "std": 0.0031254871656136184
+                },
+                "intent_acc": {
+                    "mean": 0.9722891566265061,
+                    "std": 0.005447654604919896
+                },
+                "selection_score": {
+                    "mean": 0.9454840675914195,
+                    "std": 0.0031254871656136184
+                }
+            },
+            "runs": [
+                {
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 75,
+                    "dev_slot_f1": 0.9493819894055326,
+                    "dev_intent_acc": 0.9799196787148594,
+                    "selection_score": 0.9493819894055326,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_3\\run_01_seed_42\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_3\\run_01_seed_42\\history.png"
+                },
+                {
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 50,
+                    "dev_slot_f1": 0.9464075382803298,
+                    "dev_intent_acc": 0.963855421686747,
+                    "selection_score": 0.9464075382803298,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_3\\run_02_seed_43\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_3\\run_02_seed_43\\history.png"
+                },
+                {
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 45,
+                    "dev_slot_f1": 0.9457637056581647,
+                    "dev_intent_acc": 0.9759036144578314,
+                    "selection_score": 0.9457637056581647,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_3\\run_03_seed_44\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_3\\run_03_seed_44\\history.png"
+                },
+                {
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 25,
+                    "dev_slot_f1": 0.9397944199706315,
+                    "dev_intent_acc": 0.9698795180722891,
+                    "selection_score": 0.9397944199706315,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_3\\run_04_seed_45\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_3\\run_04_seed_45\\history.png"
+                },
+                {
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 80,
+                    "dev_slot_f1": 0.9460726846424385,
+                    "dev_intent_acc": 0.9718875502008032,
+                    "selection_score": 0.9460726846424385,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_3\\run_05_seed_46\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_3\\run_05_seed_46\\history.png"
+                }
+            ]
+        },
+        {
+            "value": 4,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 80,
+                "n_heads": 1,
+                "num_layers": 4,
+                "ff_dim": 20,
+                "dropout": 0.0
+            },
+            "learning_rate": 0.005,
+            "dev": {
+                "slot_f1": {
+                    "mean": 0.9442156367594553,
+                    "std": 0.004471971300920414
+                },
+                "intent_acc": {
+                    "mean": 0.9734939759036145,
+                    "std": 0.004648930483048274
+                },
+                "selection_score": {
+                    "mean": 0.9442156367594553,
+                    "std": 0.004471971300920414
+                }
+            },
+            "runs": [
+                {
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 40,
+                    "dev_slot_f1": 0.9477413640389726,
+                    "dev_intent_acc": 0.9738955823293173,
+                    "selection_score": 0.9477413640389726,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_4\\run_01_seed_42\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_4\\run_01_seed_42\\history.png"
+                },
+                {
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 25,
+                    "dev_slot_f1": 0.9365968740784429,
+                    "dev_intent_acc": 0.9718875502008032,
+                    "selection_score": 0.9365968740784429,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_4\\run_02_seed_43\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_4\\run_02_seed_43\\history.png"
+                },
+                {
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 30,
+                    "dev_slot_f1": 0.9420076538121872,
+                    "dev_intent_acc": 0.9799196787148594,
+                    "selection_score": 0.9420076538121872,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_4\\run_03_seed_44\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_4\\run_03_seed_44\\history.png"
+                },
+                {
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 40,
+                    "dev_slot_f1": 0.9458186101295643,
+                    "dev_intent_acc": 0.9658634538152611,
+                    "selection_score": 0.9458186101295643,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_4\\run_04_seed_45\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_4\\run_04_seed_45\\history.png"
+                },
+                {
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 40,
+                    "dev_slot_f1": 0.9489136817381092,
+                    "dev_intent_acc": 0.9759036144578314,
+                    "selection_score": 0.9489136817381092,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_4\\run_05_seed_46\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\num_layers_4\\run_05_seed_46\\history.png"
+                }
+            ]
+        }
+    ],
+    "best": {
+        "parameter_name": "num_layers",
+        "value": 3,
+        "model_config": {
+            "pos_emb_size": 1024,
+            "d_model": 80,
+            "n_heads": 1,
+            "num_layers": 3,
+            "ff_dim": 20,
+            "dropout": 0.0
+        },
+        "learning_rate": 0.005,
+        "dev": {
+            "slot_f1": {
+                "mean": 0.9454840675914195,
+                "std": 0.0031254871656136184
+            },
+            "intent_acc": {
+                "mean": 0.9722891566265061,
+                "std": 0.005447654604919896
+            },
+            "selection_score": {
+                "mean": 0.9454840675914195,
+                "std": 0.0031254871656136184
+            }
+        },
+        "best_individual_checkpoint": "outputs\\part2a\\greedy_hparams\\num_layers\\best_model.pt"
+    },
+    "tuning_plot": "outputs\\part2a\\greedy_hparams\\num_layers\\tuning.png"
+}

@@ -1,0 +1,1475 @@
+greedy_hyperparameter_tuning report
+========================================
+
+{
+    "experiment_name": "greedy_hyperparameter_tuning",
+    "seed": 42,
+    "data_seed": 42,
+    "runs_per_config": 5,
+    "device": "cuda:0",
+    "dataset_dir": "dataset/ATIS",
+    "model_class": "GPT2",
+    "learning_rate": 0.005,
+    "start_model_config": {
+        "pos_emb_size": 1024,
+        "d_model": 20,
+        "n_heads": 1,
+        "num_layers": 1,
+        "ff_dim": 20,
+        "dropout": 0.0
+    },
+    "final_model_config": {
+        "pos_emb_size": 1024,
+        "d_model": 80,
+        "n_heads": 2,
+        "num_layers": 4,
+        "ff_dim": 20,
+        "dropout": 0.0
+    },
+    "fixed_training_hyperparameters": {
+        "train_batch_size": 128,
+        "eval_batch_size": 64,
+        "n_epochs": 200,
+        "patience": 5,
+        "weight_decay": 0.01,
+        "optimizer": "AdamW",
+        "selection_metric": "slot_f1"
+    },
+    "steps": [
+        {
+            "param_name": "d_model",
+            "tested_values": [
+                20,
+                40,
+                80,
+                160
+            ],
+            "runs_per_config": 5,
+            "results": [
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 20,
+                        "n_heads": 1,
+                        "num_layers": 1,
+                        "ff_dim": 20,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 38,
+                    "best_dev_slot_f1": 0.9222340448479889,
+                    "best_dev_intent_acc": 0.9558232931726908,
+                    "best_score": 0.9222340448479889,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_20_run_3_seed_44.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_20_run_3_seed_44.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 44,
+                            "best_dev_slot_f1": 0.9237089201877934,
+                            "best_dev_intent_acc": 0.9457831325301205,
+                            "best_score": 0.9237089201877934,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_20_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_20_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 35,
+                            "best_dev_slot_f1": 0.9265007320644216,
+                            "best_dev_intent_acc": 0.9718875502008032,
+                            "best_score": 0.9265007320644216,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_20_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_20_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 48,
+                            "best_dev_slot_f1": 0.9289071680376029,
+                            "best_dev_intent_acc": 0.963855421686747,
+                            "best_score": 0.9289071680376029,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_20_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_20_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 39,
+                            "best_dev_slot_f1": 0.9169590643274853,
+                            "best_dev_intent_acc": 0.9558232931726908,
+                            "best_score": 0.9169590643274853,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_20_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_20_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 24,
+                            "best_dev_slot_f1": 0.9150943396226415,
+                            "best_dev_intent_acc": 0.9417670682730924,
+                            "best_score": 0.9150943396226415,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_20_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_20_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.005361180100894624,
+                    "best_dev_intent_acc_std": 0.011144126044587619,
+                    "best_score_std": 0.005361180100894624,
+                    "d_model": 20
+                },
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 40,
+                        "n_heads": 1,
+                        "num_layers": 1,
+                        "ff_dim": 20,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 33,
+                    "best_dev_slot_f1": 0.9339879939896232,
+                    "best_dev_intent_acc": 0.9666666666666666,
+                    "best_score": 0.9339879939896232,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_40_run_5_seed_46.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_40_run_5_seed_46.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 27,
+                            "best_dev_slot_f1": 0.9233469865418373,
+                            "best_dev_intent_acc": 0.9738955823293173,
+                            "best_score": 0.9233469865418373,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_40_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_40_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 34,
+                            "best_dev_slot_f1": 0.9325513196480939,
+                            "best_dev_intent_acc": 0.9698795180722891,
+                            "best_score": 0.9325513196480939,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_40_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_40_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 37,
+                            "best_dev_slot_f1": 0.9416617560400707,
+                            "best_dev_intent_acc": 0.9678714859437751,
+                            "best_score": 0.9416617560400707,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_40_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_40_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 25,
+                            "best_dev_slot_f1": 0.9297834991222937,
+                            "best_dev_intent_acc": 0.9578313253012049,
+                            "best_score": 0.9297834991222937,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_40_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_40_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 40,
+                            "best_dev_slot_f1": 0.9425964085958198,
+                            "best_dev_intent_acc": 0.963855421686747,
+                            "best_score": 0.9425964085958198,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_40_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_40_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.007293343208651448,
+                    "best_dev_intent_acc_std": 0.005477181404411981,
+                    "best_score_std": 0.007293343208651448,
+                    "d_model": 40
+                },
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 1,
+                        "num_layers": 1,
+                        "ff_dim": 20,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 25,
+                    "best_dev_slot_f1": 0.9405574084041298,
+                    "best_dev_intent_acc": 0.9606425702811245,
+                    "best_score": 0.9405574084041298,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_80_run_5_seed_46.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_80_run_5_seed_46.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 25,
+                            "best_dev_slot_f1": 0.9398939304655273,
+                            "best_dev_intent_acc": 0.9578313253012049,
+                            "best_score": 0.9398939304655273,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_80_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_80_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 22,
+                            "best_dev_slot_f1": 0.9402061855670103,
+                            "best_dev_intent_acc": 0.9578313253012049,
+                            "best_score": 0.9402061855670103,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_80_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_80_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 20,
+                            "best_dev_slot_f1": 0.935285505124451,
+                            "best_dev_intent_acc": 0.963855421686747,
+                            "best_score": 0.935285505124451,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_80_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_80_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 27,
+                            "best_dev_slot_f1": 0.943429581614614,
+                            "best_dev_intent_acc": 0.9578313253012049,
+                            "best_score": 0.943429581614614,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_80_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_80_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 32,
+                            "best_dev_slot_f1": 0.9439718392490466,
+                            "best_dev_intent_acc": 0.9658634538152611,
+                            "best_score": 0.9439718392490466,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_80_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_80_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.0031069033326564005,
+                    "best_dev_intent_acc_std": 0.0035011236494302497,
+                    "best_score_std": 0.0031069033326564005,
+                    "d_model": 80
+                },
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 160,
+                        "n_heads": 1,
+                        "num_layers": 1,
+                        "ff_dim": 20,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 15,
+                    "best_dev_slot_f1": 0.9261466463609782,
+                    "best_dev_intent_acc": 0.9337349397590362,
+                    "best_score": 0.9261466463609782,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_160_run_1_seed_42.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_160_run_1_seed_42.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 20,
+                            "best_dev_slot_f1": 0.9293876355112803,
+                            "best_dev_intent_acc": 0.927710843373494,
+                            "best_score": 0.9293876355112803,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_160_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_160_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 12,
+                            "best_dev_slot_f1": 0.920152091254753,
+                            "best_dev_intent_acc": 0.9196787148594378,
+                            "best_score": 0.920152091254753,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_160_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_160_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 14,
+                            "best_dev_slot_f1": 0.9244677748614757,
+                            "best_dev_intent_acc": 0.9477911646586346,
+                            "best_score": 0.9244677748614757,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_160_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_160_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 14,
+                            "best_dev_slot_f1": 0.9284876905041031,
+                            "best_dev_intent_acc": 0.9257028112449799,
+                            "best_score": 0.9284876905041031,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_160_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_160_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 16,
+                            "best_dev_slot_f1": 0.9282380396732789,
+                            "best_dev_intent_acc": 0.9477911646586346,
+                            "best_score": 0.9282380396732789,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_d_model_160_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_d_model_160_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.0034383637030594824,
+                    "best_dev_intent_acc_std": 0.011777412288044336,
+                    "best_score_std": 0.0034383637030594824,
+                    "d_model": 160
+                }
+            ],
+            "best": {
+                "d_model": 80,
+                "dev_slot_f1": 0.9405574084041298,
+                "dev_intent_acc": 0.9606425702811245,
+                "best_score": 0.9405574084041298,
+                "model_config": {
+                    "pos_emb_size": 1024,
+                    "d_model": 80,
+                    "n_heads": 1,
+                    "num_layers": 1,
+                    "ff_dim": 20,
+                    "dropout": 0.0
+                },
+                "plot": "outputs\\part2a\\greedy_hparams\\tuning_d_model.png"
+            }
+        },
+        {
+            "param_name": "n_heads",
+            "tested_values": [
+                1,
+                2,
+                4,
+                8
+            ],
+            "runs_per_config": 5,
+            "results": [
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 1,
+                        "num_layers": 1,
+                        "ff_dim": 20,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 25,
+                    "best_dev_slot_f1": 0.9405574084041298,
+                    "best_dev_intent_acc": 0.9606425702811245,
+                    "best_score": 0.9405574084041298,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_1_run_5_seed_46.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_1_run_5_seed_46.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 25,
+                            "best_dev_slot_f1": 0.9398939304655273,
+                            "best_dev_intent_acc": 0.9578313253012049,
+                            "best_score": 0.9398939304655273,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_1_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_1_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 22,
+                            "best_dev_slot_f1": 0.9402061855670103,
+                            "best_dev_intent_acc": 0.9578313253012049,
+                            "best_score": 0.9402061855670103,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_1_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_1_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 20,
+                            "best_dev_slot_f1": 0.935285505124451,
+                            "best_dev_intent_acc": 0.963855421686747,
+                            "best_score": 0.935285505124451,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_1_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_1_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 27,
+                            "best_dev_slot_f1": 0.943429581614614,
+                            "best_dev_intent_acc": 0.9578313253012049,
+                            "best_score": 0.943429581614614,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_1_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_1_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 32,
+                            "best_dev_slot_f1": 0.9439718392490466,
+                            "best_dev_intent_acc": 0.9658634538152611,
+                            "best_score": 0.9439718392490466,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_1_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_1_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.0031069033326564005,
+                    "best_dev_intent_acc_std": 0.0035011236494302497,
+                    "best_score_std": 0.0031069033326564005,
+                    "n_heads": 1
+                },
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 2,
+                        "num_layers": 1,
+                        "ff_dim": 20,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 26,
+                    "best_dev_slot_f1": 0.9409300964394698,
+                    "best_dev_intent_acc": 0.9650602409638556,
+                    "best_score": 0.9409300964394698,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_2_run_2_seed_43.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_2_run_2_seed_43.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 20,
+                            "best_dev_slot_f1": 0.9373713613643045,
+                            "best_dev_intent_acc": 0.9678714859437751,
+                            "best_score": 0.9373713613643045,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_2_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_2_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 30,
+                            "best_dev_slot_f1": 0.9448214812629093,
+                            "best_dev_intent_acc": 0.9698795180722891,
+                            "best_score": 0.9448214812629093,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_2_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_2_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 30,
+                            "best_dev_slot_f1": 0.9396248534583822,
+                            "best_dev_intent_acc": 0.9658634538152611,
+                            "best_score": 0.9396248534583822,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_2_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_2_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 30,
+                            "best_dev_slot_f1": 0.9405532666274279,
+                            "best_dev_intent_acc": 0.9658634538152611,
+                            "best_score": 0.9405532666274279,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_2_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_2_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 20,
+                            "best_dev_slot_f1": 0.9422795194843248,
+                            "best_dev_intent_acc": 0.9558232931726908,
+                            "best_score": 0.9422795194843248,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_2_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_2_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.002508946937669847,
+                    "best_dev_intent_acc_std": 0.0048526289050580575,
+                    "best_score_std": 0.002508946937669847,
+                    "n_heads": 2
+                },
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 4,
+                        "num_layers": 1,
+                        "ff_dim": 20,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 24,
+                    "best_dev_slot_f1": 0.939161080408156,
+                    "best_dev_intent_acc": 0.9626506024096386,
+                    "best_score": 0.939161080408156,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_4_run_2_seed_43.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_4_run_2_seed_43.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 30,
+                            "best_dev_slot_f1": 0.9398939304655273,
+                            "best_dev_intent_acc": 0.9678714859437751,
+                            "best_score": 0.9398939304655273,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_4_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_4_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 27,
+                            "best_dev_slot_f1": 0.9430846358006488,
+                            "best_dev_intent_acc": 0.9698795180722891,
+                            "best_score": 0.9430846358006488,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_4_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_4_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 20,
+                            "best_dev_slot_f1": 0.934776250365604,
+                            "best_dev_intent_acc": 0.963855421686747,
+                            "best_score": 0.934776250365604,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_4_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_4_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 25,
+                            "best_dev_slot_f1": 0.9409344695856597,
+                            "best_dev_intent_acc": 0.9497991967871486,
+                            "best_score": 0.9409344695856597,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_4_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_4_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 20,
+                            "best_dev_slot_f1": 0.9371161158233401,
+                            "best_dev_intent_acc": 0.9618473895582329,
+                            "best_score": 0.9371161158233401,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_4_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_4_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.002914957288011411,
+                    "best_dev_intent_acc_std": 0.007025243246801549,
+                    "best_score_std": 0.002914957288011411,
+                    "n_heads": 4
+                },
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 8,
+                        "num_layers": 1,
+                        "ff_dim": 20,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 25,
+                    "best_dev_slot_f1": 0.937384856808079,
+                    "best_dev_intent_acc": 0.9642570281124498,
+                    "best_score": 0.937384856808079,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_8_run_1_seed_42.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_8_run_1_seed_42.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 32,
+                            "best_dev_slot_f1": 0.9460654288240495,
+                            "best_dev_intent_acc": 0.9658634538152611,
+                            "best_score": 0.9460654288240495,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_8_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_8_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 23,
+                            "best_dev_slot_f1": 0.9376470588235295,
+                            "best_dev_intent_acc": 0.963855421686747,
+                            "best_score": 0.9376470588235295,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_8_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_8_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 21,
+                            "best_dev_slot_f1": 0.9319648093841643,
+                            "best_dev_intent_acc": 0.9598393574297188,
+                            "best_score": 0.9319648093841643,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_8_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_8_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 27,
+                            "best_dev_slot_f1": 0.9371327849588719,
+                            "best_dev_intent_acc": 0.9698795180722891,
+                            "best_score": 0.9371327849588719,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_8_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_8_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 21,
+                            "best_dev_slot_f1": 0.9341142020497804,
+                            "best_dev_intent_acc": 0.9618473895582329,
+                            "best_score": 0.9341142020497804,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_n_heads_8_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_n_heads_8_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.0048074674676795515,
+                    "best_dev_intent_acc_std": 0.0034547491032299775,
+                    "best_score_std": 0.0048074674676795515,
+                    "n_heads": 8
+                }
+            ],
+            "best": {
+                "n_heads": 2,
+                "dev_slot_f1": 0.9409300964394698,
+                "dev_intent_acc": 0.9650602409638556,
+                "best_score": 0.9409300964394698,
+                "model_config": {
+                    "pos_emb_size": 1024,
+                    "d_model": 80,
+                    "n_heads": 2,
+                    "num_layers": 1,
+                    "ff_dim": 20,
+                    "dropout": 0.0
+                },
+                "plot": "outputs\\part2a\\greedy_hparams\\tuning_n_heads.png"
+            }
+        },
+        {
+            "param_name": "num_layers",
+            "tested_values": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "runs_per_config": 5,
+            "results": [
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 2,
+                        "num_layers": 1,
+                        "ff_dim": 20,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 26,
+                    "best_dev_slot_f1": 0.9409300964394698,
+                    "best_dev_intent_acc": 0.9650602409638556,
+                    "best_score": 0.9409300964394698,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_1_run_2_seed_43.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_1_run_2_seed_43.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 20,
+                            "best_dev_slot_f1": 0.9373713613643045,
+                            "best_dev_intent_acc": 0.9678714859437751,
+                            "best_score": 0.9373713613643045,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_1_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_1_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 30,
+                            "best_dev_slot_f1": 0.9448214812629093,
+                            "best_dev_intent_acc": 0.9698795180722891,
+                            "best_score": 0.9448214812629093,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_1_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_1_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 30,
+                            "best_dev_slot_f1": 0.9396248534583822,
+                            "best_dev_intent_acc": 0.9658634538152611,
+                            "best_score": 0.9396248534583822,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_1_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_1_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 30,
+                            "best_dev_slot_f1": 0.9405532666274279,
+                            "best_dev_intent_acc": 0.9658634538152611,
+                            "best_score": 0.9405532666274279,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_1_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_1_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 20,
+                            "best_dev_slot_f1": 0.9422795194843248,
+                            "best_dev_intent_acc": 0.9558232931726908,
+                            "best_score": 0.9422795194843248,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_1_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_1_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.002508946937669847,
+                    "best_dev_intent_acc_std": 0.0048526289050580575,
+                    "best_score_std": 0.002508946937669847,
+                    "num_layers": 1
+                },
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 2,
+                        "num_layers": 2,
+                        "ff_dim": 20,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 18,
+                    "best_dev_slot_f1": 0.9329206401224545,
+                    "best_dev_intent_acc": 0.9646586345381525,
+                    "best_score": 0.9329206401224545,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_2_run_4_seed_45.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_2_run_4_seed_45.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 14,
+                            "best_dev_slot_f1": 0.925751325869181,
+                            "best_dev_intent_acc": 0.9538152610441767,
+                            "best_score": 0.925751325869181,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_2_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_2_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 20,
+                            "best_dev_slot_f1": 0.933176332057698,
+                            "best_dev_intent_acc": 0.9658634538152611,
+                            "best_score": 0.933176332057698,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_2_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_2_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 20,
+                            "best_dev_slot_f1": 0.9346615880457076,
+                            "best_dev_intent_acc": 0.9678714859437751,
+                            "best_score": 0.9346615880457076,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_2_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_2_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 14,
+                            "best_dev_slot_f1": 0.9370958259847149,
+                            "best_dev_intent_acc": 0.9738955823293173,
+                            "best_score": 0.9370958259847149,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_2_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_2_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 23,
+                            "best_dev_slot_f1": 0.9339181286549707,
+                            "best_dev_intent_acc": 0.9618473895582329,
+                            "best_score": 0.9339181286549707,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_2_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_2_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.003818965966235866,
+                    "best_dev_intent_acc_std": 0.006671987038488429,
+                    "best_score_std": 0.003818965966235866,
+                    "num_layers": 2
+                },
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 2,
+                        "num_layers": 3,
+                        "ff_dim": 20,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 28,
+                    "best_dev_slot_f1": 0.9416837585368064,
+                    "best_dev_intent_acc": 0.9690763052208835,
+                    "best_score": 0.9416837585368064,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_3_run_2_seed_43.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_3_run_2_seed_43.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 17,
+                            "best_dev_slot_f1": 0.9346289752650176,
+                            "best_dev_intent_acc": 0.9799196787148594,
+                            "best_score": 0.9346289752650176,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_3_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_3_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 37,
+                            "best_dev_slot_f1": 0.9451650943396227,
+                            "best_dev_intent_acc": 0.9598393574297188,
+                            "best_score": 0.9451650943396227,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_3_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_3_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 35,
+                            "best_dev_slot_f1": 0.9450807635829662,
+                            "best_dev_intent_acc": 0.9819277108433735,
+                            "best_score": 0.9450807635829662,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_3_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_3_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 28,
+                            "best_dev_slot_f1": 0.9443626729467177,
+                            "best_dev_intent_acc": 0.9598393574297188,
+                            "best_score": 0.9443626729467177,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_3_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_3_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 21,
+                            "best_dev_slot_f1": 0.9391812865497077,
+                            "best_dev_intent_acc": 0.963855421686747,
+                            "best_score": 0.9391812865497077,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_3_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_3_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.004168171247186485,
+                    "best_dev_intent_acc_std": 0.009804462341954796,
+                    "best_score_std": 0.004168171247186485,
+                    "num_layers": 3
+                },
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 2,
+                        "num_layers": 4,
+                        "ff_dim": 20,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 24,
+                    "best_dev_slot_f1": 0.9428992632171621,
+                    "best_dev_intent_acc": 0.9694779116465864,
+                    "best_score": 0.9428992632171621,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_4_run_2_seed_43.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_4_run_2_seed_43.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 28,
+                            "best_dev_slot_f1": 0.9462492616656821,
+                            "best_dev_intent_acc": 0.9799196787148594,
+                            "best_score": 0.9462492616656821,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_4_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_4_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 21,
+                            "best_dev_slot_f1": 0.9465288035450516,
+                            "best_dev_intent_acc": 0.9618473895582329,
+                            "best_score": 0.9465288035450516,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_4_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_4_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 25,
+                            "best_dev_slot_f1": 0.9448865310934277,
+                            "best_dev_intent_acc": 0.9759036144578314,
+                            "best_score": 0.9448865310934277,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_4_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_4_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 22,
+                            "best_dev_slot_f1": 0.9380323054331865,
+                            "best_dev_intent_acc": 0.9598393574297188,
+                            "best_score": 0.9380323054331865,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_4_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_4_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 26,
+                            "best_dev_slot_f1": 0.9387994143484627,
+                            "best_dev_intent_acc": 0.9698795180722891,
+                            "best_score": 0.9387994143484627,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_num_layers_4_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_num_layers_4_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.003710561279000165,
+                    "best_dev_intent_acc_std": 0.007766698636872995,
+                    "best_score_std": 0.003710561279000165,
+                    "num_layers": 4
+                }
+            ],
+            "best": {
+                "num_layers": 4,
+                "dev_slot_f1": 0.9428992632171621,
+                "dev_intent_acc": 0.9694779116465864,
+                "best_score": 0.9428992632171621,
+                "model_config": {
+                    "pos_emb_size": 1024,
+                    "d_model": 80,
+                    "n_heads": 2,
+                    "num_layers": 4,
+                    "ff_dim": 20,
+                    "dropout": 0.0
+                },
+                "plot": "outputs\\part2a\\greedy_hparams\\tuning_num_layers.png"
+            }
+        },
+        {
+            "param_name": "ff_dim",
+            "tested_values": [
+                20,
+                40,
+                80,
+                160,
+                320
+            ],
+            "runs_per_config": 5,
+            "results": [
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 2,
+                        "num_layers": 4,
+                        "ff_dim": 20,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 24,
+                    "best_dev_slot_f1": 0.9428992632171621,
+                    "best_dev_intent_acc": 0.9694779116465864,
+                    "best_score": 0.9428992632171621,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_20_run_2_seed_43.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_20_run_2_seed_43.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 28,
+                            "best_dev_slot_f1": 0.9462492616656821,
+                            "best_dev_intent_acc": 0.9799196787148594,
+                            "best_score": 0.9462492616656821,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_20_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_20_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 21,
+                            "best_dev_slot_f1": 0.9465288035450516,
+                            "best_dev_intent_acc": 0.9618473895582329,
+                            "best_score": 0.9465288035450516,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_20_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_20_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 25,
+                            "best_dev_slot_f1": 0.9448865310934277,
+                            "best_dev_intent_acc": 0.9759036144578314,
+                            "best_score": 0.9448865310934277,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_20_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_20_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 22,
+                            "best_dev_slot_f1": 0.9380323054331865,
+                            "best_dev_intent_acc": 0.9598393574297188,
+                            "best_score": 0.9380323054331865,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_20_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_20_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 26,
+                            "best_dev_slot_f1": 0.9387994143484627,
+                            "best_dev_intent_acc": 0.9698795180722891,
+                            "best_score": 0.9387994143484627,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_20_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_20_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.003710561279000165,
+                    "best_dev_intent_acc_std": 0.007766698636872995,
+                    "best_score_std": 0.003710561279000165,
+                    "ff_dim": 20
+                },
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 2,
+                        "num_layers": 4,
+                        "ff_dim": 40,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 21,
+                    "best_dev_slot_f1": 0.939514310971326,
+                    "best_dev_intent_acc": 0.9751004016064257,
+                    "best_score": 0.939514310971326,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_40_run_3_seed_44.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_40_run_3_seed_44.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 25,
+                            "best_dev_slot_f1": 0.9442970822281167,
+                            "best_dev_intent_acc": 0.9779116465863453,
+                            "best_score": 0.9442970822281167,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_40_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_40_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 20,
+                            "best_dev_slot_f1": 0.9387514723203769,
+                            "best_dev_intent_acc": 0.9698795180722891,
+                            "best_score": 0.9387514723203769,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_40_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_40_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 19,
+                            "best_dev_slot_f1": 0.9448356807511737,
+                            "best_dev_intent_acc": 0.9819277108433735,
+                            "best_score": 0.9448356807511737,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_40_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_40_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 14,
+                            "best_dev_slot_f1": 0.9253731343283583,
+                            "best_dev_intent_acc": 0.9678714859437751,
+                            "best_score": 0.9253731343283583,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_40_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_40_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 27,
+                            "best_dev_slot_f1": 0.9443141852286048,
+                            "best_dev_intent_acc": 0.9779116465863453,
+                            "best_score": 0.9443141852286048,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_40_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_40_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.007413305197674569,
+                    "best_dev_intent_acc_std": 0.005327911309807856,
+                    "best_score_std": 0.007413305197674569,
+                    "ff_dim": 40
+                },
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 2,
+                        "num_layers": 4,
+                        "ff_dim": 80,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 23,
+                    "best_dev_slot_f1": 0.9387954671395328,
+                    "best_dev_intent_acc": 0.9710843373493976,
+                    "best_score": 0.9387954671395328,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_80_run_2_seed_43.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_80_run_2_seed_43.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 21,
+                            "best_dev_slot_f1": 0.9428066037735849,
+                            "best_dev_intent_acc": 0.9738955823293173,
+                            "best_score": 0.9428066037735849,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_80_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_80_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 32,
+                            "best_dev_slot_f1": 0.9469026548672567,
+                            "best_dev_intent_acc": 0.9718875502008032,
+                            "best_score": 0.9469026548672567,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_80_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_80_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 17,
+                            "best_dev_slot_f1": 0.9323529411764707,
+                            "best_dev_intent_acc": 0.9759036144578314,
+                            "best_score": 0.9323529411764707,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_80_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_80_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 27,
+                            "best_dev_slot_f1": 0.9448865310934277,
+                            "best_dev_intent_acc": 0.9718875502008032,
+                            "best_score": 0.9448865310934277,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_80_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_80_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 19,
+                            "best_dev_slot_f1": 0.9270286047869236,
+                            "best_dev_intent_acc": 0.9618473895582329,
+                            "best_score": 0.9270286047869236,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_80_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_80_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.007731519390779661,
+                    "best_dev_intent_acc_std": 0.004852628905058079,
+                    "best_score_std": 0.007731519390779661,
+                    "ff_dim": 80
+                },
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 2,
+                        "num_layers": 4,
+                        "ff_dim": 160,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 26,
+                    "best_dev_slot_f1": 0.9362314610011062,
+                    "best_dev_intent_acc": 0.970281124497992,
+                    "best_score": 0.9362314610011062,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_160_run_2_seed_43.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_160_run_2_seed_43.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 23,
+                            "best_dev_slot_f1": 0.9441654357459379,
+                            "best_dev_intent_acc": 0.9698795180722891,
+                            "best_score": 0.9441654357459379,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_160_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_160_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 36,
+                            "best_dev_slot_f1": 0.9471820596046031,
+                            "best_dev_intent_acc": 0.9718875502008032,
+                            "best_score": 0.9471820596046031,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_160_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_160_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 30,
+                            "best_dev_slot_f1": 0.9417989417989417,
+                            "best_dev_intent_acc": 0.9738955823293173,
+                            "best_score": 0.9417989417989417,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_160_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_160_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 27,
+                            "best_dev_slot_f1": 0.9372236958443856,
+                            "best_dev_intent_acc": 0.9718875502008032,
+                            "best_score": 0.9372236958443856,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_160_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_160_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 14,
+                            "best_dev_slot_f1": 0.9107871720116618,
+                            "best_dev_intent_acc": 0.963855421686747,
+                            "best_score": 0.9107871720116618,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_160_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_160_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.013132073557693637,
+                    "best_dev_intent_acc_std": 0.003454749103229972,
+                    "best_score_std": 0.013132073557693637,
+                    "ff_dim": 160
+                },
+                {
+                    "model_config": {
+                        "pos_emb_size": 1024,
+                        "d_model": 80,
+                        "n_heads": 2,
+                        "num_layers": 4,
+                        "ff_dim": 320,
+                        "dropout": 0.0
+                    },
+                    "best_epoch": 27,
+                    "best_dev_slot_f1": 0.9379028633107733,
+                    "best_dev_intent_acc": 0.9763052208835342,
+                    "best_score": 0.9379028633107733,
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_320_run_3_seed_44.png",
+                    "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_320_run_3_seed_44.pt",
+                    "runs": [
+                        {
+                            "run": 1,
+                            "seed": 42,
+                            "data_seed": 42,
+                            "best_epoch": 36,
+                            "best_dev_slot_f1": 0.9414533686378347,
+                            "best_dev_intent_acc": 0.9839357429718876,
+                            "best_score": 0.9414533686378347,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_320_run_1_seed_42.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_320_run_1_seed_42.pt"
+                        },
+                        {
+                            "run": 2,
+                            "seed": 43,
+                            "data_seed": 42,
+                            "best_epoch": 25,
+                            "best_dev_slot_f1": 0.9411764705882353,
+                            "best_dev_intent_acc": 0.9779116465863453,
+                            "best_score": 0.9411764705882353,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_320_run_2_seed_43.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_320_run_2_seed_43.pt"
+                        },
+                        {
+                            "run": 3,
+                            "seed": 44,
+                            "data_seed": 42,
+                            "best_epoch": 25,
+                            "best_dev_slot_f1": 0.9451650943396227,
+                            "best_dev_intent_acc": 0.9759036144578314,
+                            "best_score": 0.9451650943396227,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_320_run_3_seed_44.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_320_run_3_seed_44.pt"
+                        },
+                        {
+                            "run": 4,
+                            "seed": 45,
+                            "data_seed": 42,
+                            "best_epoch": 18,
+                            "best_dev_slot_f1": 0.9273315681082671,
+                            "best_dev_intent_acc": 0.9698795180722891,
+                            "best_score": 0.9273315681082671,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_320_run_4_seed_45.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_320_run_4_seed_45.pt"
+                        },
+                        {
+                            "run": 5,
+                            "seed": 46,
+                            "data_seed": 42,
+                            "best_epoch": 32,
+                            "best_dev_slot_f1": 0.9343878148799063,
+                            "best_dev_intent_acc": 0.9738955823293173,
+                            "best_score": 0.9343878148799063,
+                            "history_plot": "outputs\\part2a\\greedy_hparams\\history_ff_dim_320_run_5_seed_46.png",
+                            "model_path": "outputs\\part2a\\greedy_hparams\\checkpoints\\model_ff_dim_320_run_5_seed_46.pt"
+                        }
+                    ],
+                    "best_dev_slot_f1_std": 0.006327249638362585,
+                    "best_dev_intent_acc_std": 0.0046489304830482974,
+                    "best_score_std": 0.006327249638362585,
+                    "ff_dim": 320
+                }
+            ],
+            "best": {
+                "ff_dim": 20,
+                "dev_slot_f1": 0.9428992632171621,
+                "dev_intent_acc": 0.9694779116465864,
+                "best_score": 0.9428992632171621,
+                "model_config": {
+                    "pos_emb_size": 1024,
+                    "d_model": 80,
+                    "n_heads": 2,
+                    "num_layers": 4,
+                    "ff_dim": 20,
+                    "dropout": 0.0
+                },
+                "plot": "outputs\\part2a\\greedy_hparams\\tuning_ff_dim.png"
+            }
+        }
+    ],
+    "best": {
+        "learning_rate": 0.005,
+        "best_epoch": 21,
+        "dev_slot_f1": 0.9465288035450516,
+        "dev_intent_acc": 0.9618473895582329,
+        "test_slot_f1": 0.9016913319238901,
+        "test_intent_acc": 0.9249720044792833,
+        "model_config": {
+            "pos_emb_size": 1024,
+            "d_model": 80,
+            "n_heads": 2,
+            "num_layers": 4,
+            "ff_dim": 20,
+            "dropout": 0.0
+        },
+        "model_path": "outputs\\part2a\\greedy_hparams\\best_model.pt"
+    }
+}

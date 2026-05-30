@@ -1,0 +1,105 @@
+{
+    "experiment_name": "dropout_tuning",
+    "seed": 42,
+    "device": "cuda:0",
+    "model_class": "GPT2Dropout",
+    "learning_rate": 0.002,
+    "base_model_config": {
+        "pos_emb_size": 1024,
+        "d_model": 40,
+        "n_heads": 4,
+        "num_layers": 4,
+        "ff_dim": 160,
+        "dropout": 0.0
+    },
+    "tested_dropout_values": [
+        0.1,
+        0.2,
+        0.3,
+        0.5
+    ],
+    "fixed_training_hyperparameters": {
+        "train_batch_size": 8,
+        "eval_batch_size": 16,
+        "n_epochs": 100,
+        "patience": 3,
+        "weight_decay": 0.01,
+        "grad_clip": null,
+        "optimizer": "AdamW"
+    },
+    "results": [
+        {
+            "dropout": 0.1,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 40,
+                "n_heads": 4,
+                "num_layers": 4,
+                "ff_dim": 160,
+                "dropout": 0.1
+            },
+            "best_epoch": 18,
+            "best_dev_ppl": 40.34129076080085,
+            "history_plot": "outputs\\dropout_tuning\\history_dropout_0p1.png"
+        },
+        {
+            "dropout": 0.2,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 40,
+                "n_heads": 4,
+                "num_layers": 4,
+                "ff_dim": 160,
+                "dropout": 0.2
+            },
+            "best_epoch": 27,
+            "best_dev_ppl": 42.19391062311095,
+            "history_plot": "outputs\\dropout_tuning\\history_dropout_0p2.png"
+        },
+        {
+            "dropout": 0.3,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 40,
+                "n_heads": 4,
+                "num_layers": 4,
+                "ff_dim": 160,
+                "dropout": 0.3
+            },
+            "best_epoch": 32,
+            "best_dev_ppl": 44.8995888148028,
+            "history_plot": "outputs\\dropout_tuning\\history_dropout_0p3.png"
+        },
+        {
+            "dropout": 0.5,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 40,
+                "n_heads": 4,
+                "num_layers": 4,
+                "ff_dim": 160,
+                "dropout": 0.5
+            },
+            "best_epoch": 13,
+            "best_dev_ppl": 56.069739060788244,
+            "history_plot": "outputs\\dropout_tuning\\history_dropout_0p5.png"
+        }
+    ],
+    "best": {
+        "learning_rate": 0.002,
+        "best_epoch": 18,
+        "dev_ppl": 40.34129076080085,
+        "test_loss": 3.586671022638945,
+        "test_ppl": 36.11365406006249,
+        "model_config": {
+            "pos_emb_size": 1024,
+            "d_model": 40,
+            "n_heads": 4,
+            "num_layers": 4,
+            "ff_dim": 160,
+            "dropout": 0.1
+        },
+        "model_path": "outputs\\dropout_tuning\\best_model.pt",
+        "dropout_plot": "outputs\\dropout_tuning\\dropout_tuning.png"
+    }
+}

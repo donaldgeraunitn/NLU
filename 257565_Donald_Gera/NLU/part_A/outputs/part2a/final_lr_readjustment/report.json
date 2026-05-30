@@ -1,0 +1,455 @@
+{
+    "experiment_name": "final_lr_readjustment",
+    "parameter_name": "learning_rate",
+    "candidate_values": [
+        0.0005,
+        0.001,
+        0.002,
+        0.003,
+        0.005
+    ],
+    "runs_per_config": 5,
+    "seed": 42,
+    "data_seed": 42,
+    "dataset_dir": "dataset/ATIS",
+    "selection_metric": "slot_f1",
+    "fixed_training_hyperparameters": {
+        "train_batch_size": 128,
+        "eval_batch_size": 64,
+        "n_epochs": 200,
+        "patience": 3,
+        "eval_every": 5,
+        "weight_decay": 0.01,
+        "optimizer": "AdamW"
+    },
+    "base_model_config": {
+        "pos_emb_size": 1024,
+        "d_model": 80,
+        "n_heads": 1,
+        "num_layers": 3,
+        "ff_dim": 80,
+        "dropout": 0.0
+    },
+    "base_learning_rate": null,
+    "results": [
+        {
+            "value": 0.0005,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 80,
+                "n_heads": 1,
+                "num_layers": 3,
+                "ff_dim": 80,
+                "dropout": 0.0
+            },
+            "learning_rate": 0.0005,
+            "dev": {
+                "slot_f1": {
+                    "mean": 0.9262749486537023,
+                    "std": 0.008439974937142115
+                },
+                "intent_acc": {
+                    "mean": 0.9522088353413654,
+                    "std": 0.008557138856490972
+                },
+                "selection_score": {
+                    "mean": 0.9262749486537023,
+                    "std": 0.008439974937142115
+                }
+            },
+            "runs": [
+                {
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 130,
+                    "dev_slot_f1": 0.9390279823269513,
+                    "dev_intent_acc": 0.9357429718875502,
+                    "selection_score": 0.9390279823269513,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p0005\\run_01_seed_42\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p0005\\run_01_seed_42\\history.png"
+                },
+                {
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 105,
+                    "dev_slot_f1": 0.9218519610734296,
+                    "dev_intent_acc": 0.9538152610441767,
+                    "selection_score": 0.9218519610734296,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p0005\\run_02_seed_43\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p0005\\run_02_seed_43\\history.png"
+                },
+                {
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 110,
+                    "dev_slot_f1": 0.9164957515382361,
+                    "dev_intent_acc": 0.9578313253012049,
+                    "selection_score": 0.9164957515382361,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p0005\\run_03_seed_44\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p0005\\run_03_seed_44\\history.png"
+                },
+                {
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 125,
+                    "dev_slot_f1": 0.9332156516622535,
+                    "dev_intent_acc": 0.9598393574297188,
+                    "selection_score": 0.9332156516622535,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p0005\\run_04_seed_45\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p0005\\run_04_seed_45\\history.png"
+                },
+                {
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 145,
+                    "dev_slot_f1": 0.9207833966676411,
+                    "dev_intent_acc": 0.9538152610441767,
+                    "selection_score": 0.9207833966676411,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p0005\\run_05_seed_46\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p0005\\run_05_seed_46\\history.png"
+                }
+            ]
+        },
+        {
+            "value": 0.001,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 80,
+                "n_heads": 1,
+                "num_layers": 3,
+                "ff_dim": 80,
+                "dropout": 0.0
+            },
+            "learning_rate": 0.001,
+            "dev": {
+                "slot_f1": {
+                    "mean": 0.9335325703552757,
+                    "std": 0.006500710335835
+                },
+                "intent_acc": {
+                    "mean": 0.9610441767068274,
+                    "std": 0.006037468425049353
+                },
+                "selection_score": {
+                    "mean": 0.9335325703552757,
+                    "std": 0.006500710335835
+                }
+            },
+            "runs": [
+                {
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 75,
+                    "dev_slot_f1": 0.9454116258483329,
+                    "dev_intent_acc": 0.9658634538152611,
+                    "selection_score": 0.9454116258483329,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p001\\run_01_seed_42\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p001\\run_01_seed_42\\history.png"
+                },
+                {
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 105,
+                    "dev_slot_f1": 0.9356172474896634,
+                    "dev_intent_acc": 0.9497991967871486,
+                    "selection_score": 0.9356172474896634,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p001\\run_02_seed_43\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p001\\run_02_seed_43\\history.png"
+                },
+                {
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 60,
+                    "dev_slot_f1": 0.9288235294117646,
+                    "dev_intent_acc": 0.963855421686747,
+                    "selection_score": 0.9288235294117646,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p001\\run_03_seed_44\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p001\\run_03_seed_44\\history.png"
+                },
+                {
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 70,
+                    "dev_slot_f1": 0.9282576866764275,
+                    "dev_intent_acc": 0.9658634538152611,
+                    "selection_score": 0.9282576866764275,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p001\\run_04_seed_45\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p001\\run_04_seed_45\\history.png"
+                },
+                {
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 100,
+                    "dev_slot_f1": 0.9295527623501899,
+                    "dev_intent_acc": 0.9598393574297188,
+                    "selection_score": 0.9295527623501899,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p001\\run_05_seed_46\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p001\\run_05_seed_46\\history.png"
+                }
+            ]
+        },
+        {
+            "value": 0.002,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 80,
+                "n_heads": 1,
+                "num_layers": 3,
+                "ff_dim": 80,
+                "dropout": 0.0
+            },
+            "learning_rate": 0.002,
+            "dev": {
+                "slot_f1": {
+                    "mean": 0.9408869807335789,
+                    "std": 0.004366497570514406
+                },
+                "intent_acc": {
+                    "mean": 0.9722891566265061,
+                    "std": 0.008557138856490957
+                },
+                "selection_score": {
+                    "mean": 0.9408869807335789,
+                    "std": 0.004366497570514406
+                }
+            },
+            "runs": [
+                {
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 90,
+                    "dev_slot_f1": 0.9434628975265018,
+                    "dev_intent_acc": 0.9819277108433735,
+                    "selection_score": 0.9434628975265018,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p002\\run_01_seed_42\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p002\\run_01_seed_42\\history.png"
+                },
+                {
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 65,
+                    "dev_slot_f1": 0.9399293286219081,
+                    "dev_intent_acc": 0.9718875502008032,
+                    "selection_score": 0.9399293286219081,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p002\\run_02_seed_43\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p002\\run_02_seed_43\\history.png"
+                },
+                {
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 45,
+                    "dev_slot_f1": 0.9357205752861755,
+                    "dev_intent_acc": 0.9698795180722891,
+                    "selection_score": 0.9357205752861755,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p002\\run_03_seed_44\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p002\\run_03_seed_44\\history.png"
+                },
+                {
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 65,
+                    "dev_slot_f1": 0.9478952016485134,
+                    "dev_intent_acc": 0.9799196787148594,
+                    "selection_score": 0.9478952016485134,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p002\\run_04_seed_45\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p002\\run_04_seed_45\\history.png"
+                },
+                {
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 70,
+                    "dev_slot_f1": 0.9374269005847953,
+                    "dev_intent_acc": 0.9578313253012049,
+                    "selection_score": 0.9374269005847953,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p002\\run_05_seed_46\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p002\\run_05_seed_46\\history.png"
+                }
+            ]
+        },
+        {
+            "value": 0.003,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 80,
+                "n_heads": 1,
+                "num_layers": 3,
+                "ff_dim": 80,
+                "dropout": 0.0
+            },
+            "learning_rate": 0.003,
+            "dev": {
+                "slot_f1": {
+                    "mean": 0.9416023259744677,
+                    "std": 0.002244666854012859
+                },
+                "intent_acc": {
+                    "mean": 0.9706827309236947,
+                    "std": 0.008669491222860613
+                },
+                "selection_score": {
+                    "mean": 0.9416023259744677,
+                    "std": 0.002244666854012859
+                }
+            },
+            "runs": [
+                {
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 35,
+                    "dev_slot_f1": 0.9411418481459682,
+                    "dev_intent_acc": 0.9819277108433735,
+                    "selection_score": 0.9411418481459682,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p003\\run_01_seed_42\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p003\\run_01_seed_42\\history.png"
+                },
+                {
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 45,
+                    "dev_slot_f1": 0.9451003541912633,
+                    "dev_intent_acc": 0.9718875502008032,
+                    "selection_score": 0.9451003541912633,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p003\\run_02_seed_43\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p003\\run_02_seed_43\\history.png"
+                },
+                {
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 30,
+                    "dev_slot_f1": 0.9380686821250366,
+                    "dev_intent_acc": 0.9779116465863453,
+                    "selection_score": 0.9380686821250366,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p003\\run_03_seed_44\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p003\\run_03_seed_44\\history.png"
+                },
+                {
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 30,
+                    "dev_slot_f1": 0.9421099030267411,
+                    "dev_intent_acc": 0.9618473895582329,
+                    "selection_score": 0.9421099030267411,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p003\\run_04_seed_45\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p003\\run_04_seed_45\\history.png"
+                },
+                {
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 35,
+                    "dev_slot_f1": 0.9415908423833285,
+                    "dev_intent_acc": 0.9598393574297188,
+                    "selection_score": 0.9415908423833285,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p003\\run_05_seed_46\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p003\\run_05_seed_46\\history.png"
+                }
+            ]
+        },
+        {
+            "value": 0.005,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 80,
+                "n_heads": 1,
+                "num_layers": 3,
+                "ff_dim": 80,
+                "dropout": 0.0
+            },
+            "learning_rate": 0.005,
+            "dev": {
+                "slot_f1": {
+                    "mean": 0.9468100141214644,
+                    "std": 0.00387875988511146
+                },
+                "intent_acc": {
+                    "mean": 0.9714859437751004,
+                    "std": 0.0040955980028857565
+                },
+                "selection_score": {
+                    "mean": 0.9468100141214644,
+                    "std": 0.00387875988511146
+                }
+            },
+            "runs": [
+                {
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 60,
+                    "dev_slot_f1": 0.9543446244477173,
+                    "dev_intent_acc": 0.9698795180722891,
+                    "selection_score": 0.9543446244477173,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p005\\run_01_seed_42\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p005\\run_01_seed_42\\history.png"
+                },
+                {
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 45,
+                    "dev_slot_f1": 0.9445754716981133,
+                    "dev_intent_acc": 0.9698795180722891,
+                    "selection_score": 0.9445754716981133,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p005\\run_02_seed_43\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p005\\run_02_seed_43\\history.png"
+                },
+                {
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 45,
+                    "dev_slot_f1": 0.9454545454545455,
+                    "dev_intent_acc": 0.9779116465863453,
+                    "selection_score": 0.9454545454545455,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p005\\run_03_seed_44\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p005\\run_03_seed_44\\history.png"
+                },
+                {
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 40,
+                    "dev_slot_f1": 0.946223920070526,
+                    "dev_intent_acc": 0.9738955823293173,
+                    "selection_score": 0.946223920070526,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p005\\run_04_seed_45\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p005\\run_04_seed_45\\history.png"
+                },
+                {
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 65,
+                    "dev_slot_f1": 0.9434515089364196,
+                    "dev_intent_acc": 0.9658634538152611,
+                    "selection_score": 0.9434515089364196,
+                    "checkpoint_path": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p005\\run_05_seed_46\\model.pt",
+                    "history_plot": "outputs\\part2a\\final_lr_readjustment\\learning_rate_0p005\\run_05_seed_46\\history.png"
+                }
+            ]
+        }
+    ],
+    "best": {
+        "parameter_name": "learning_rate",
+        "value": 0.005,
+        "model_config": {
+            "pos_emb_size": 1024,
+            "d_model": 80,
+            "n_heads": 1,
+            "num_layers": 3,
+            "ff_dim": 80,
+            "dropout": 0.0
+        },
+        "learning_rate": 0.005,
+        "dev": {
+            "slot_f1": {
+                "mean": 0.9468100141214644,
+                "std": 0.00387875988511146
+            },
+            "intent_acc": {
+                "mean": 0.9714859437751004,
+                "std": 0.0040955980028857565
+            },
+            "selection_score": {
+                "mean": 0.9468100141214644,
+                "std": 0.00387875988511146
+            }
+        },
+        "best_individual_checkpoint": "outputs\\part2a\\final_lr_readjustment\\best_model.pt"
+    },
+    "tuning_plot": "outputs\\part2a\\final_lr_readjustment\\tuning.png"
+}

@@ -1,0 +1,441 @@
+baseline_lr_tuning report
+========================================
+
+{
+    "experiment_name": "baseline_lr_tuning",
+    "seed": 42,
+    "data_seed": 42,
+    "runs_per_config": 5,
+    "device": "cuda:0",
+    "dataset_dir": "dataset/ATIS",
+    "model_class": "GPT2",
+    "tested_learning_rates": [
+        0.0005,
+        0.001,
+        0.002,
+        0.003,
+        0.005
+    ],
+    "fixed_model_hyperparameters": {
+        "pos_emb_size": 1024,
+        "d_model": 20,
+        "n_heads": 1,
+        "num_layers": 1,
+        "ff_dim": 20,
+        "dropout": 0.0
+    },
+    "fixed_training_hyperparameters": {
+        "train_batch_size": 128,
+        "eval_batch_size": 64,
+        "n_epochs": 200,
+        "patience": 5,
+        "weight_decay": 0.01,
+        "optimizer": "AdamW",
+        "selection_metric": "slot_f1"
+    },
+    "results": [
+        {
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 20,
+                "n_heads": 1,
+                "num_layers": 1,
+                "ff_dim": 20,
+                "dropout": 0.0
+            },
+            "best_epoch": 2,
+            "best_dev_slot_f1": 0.1549477371570627,
+            "best_dev_intent_acc": 0.7220883534136545,
+            "best_score": 0.1549477371570627,
+            "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p0005_run_3_seed_44.png",
+            "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p0005_run_3_seed_44.pt",
+            "runs": [
+                {
+                    "run": 1,
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 1,
+                    "best_dev_slot_f1": 0.13985196727697702,
+                    "best_dev_intent_acc": 0.6626506024096386,
+                    "best_score": 0.13985196727697702,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p0005_run_1_seed_42.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p0005_run_1_seed_42.pt"
+                },
+                {
+                    "run": 2,
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 2,
+                    "best_dev_slot_f1": 0.16481687014428414,
+                    "best_dev_intent_acc": 0.7369477911646586,
+                    "best_score": 0.16481687014428414,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p0005_run_2_seed_43.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p0005_run_2_seed_43.pt"
+                },
+                {
+                    "run": 3,
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 2,
+                    "best_dev_slot_f1": 0.18731117824773413,
+                    "best_dev_intent_acc": 0.7369477911646586,
+                    "best_score": 0.18731117824773413,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p0005_run_3_seed_44.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p0005_run_3_seed_44.pt"
+                },
+                {
+                    "run": 4,
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 2,
+                    "best_dev_slot_f1": 0.16662963785825372,
+                    "best_dev_intent_acc": 0.7369477911646586,
+                    "best_score": 0.16662963785825372,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p0005_run_4_seed_45.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p0005_run_4_seed_45.pt"
+                },
+                {
+                    "run": 5,
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 2,
+                    "best_dev_slot_f1": 0.11612903225806451,
+                    "best_dev_intent_acc": 0.7369477911646586,
+                    "best_score": 0.11612903225806451,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p0005_run_5_seed_46.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p0005_run_5_seed_46.pt"
+                }
+            ],
+            "best_dev_slot_f1_std": 0.02456026476831762,
+            "best_dev_intent_acc_std": 0.029718875502008003,
+            "best_score_std": 0.02456026476831762,
+            "learning_rate": 0.0005
+        },
+        {
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 20,
+                "n_heads": 1,
+                "num_layers": 1,
+                "ff_dim": 20,
+                "dropout": 0.0
+            },
+            "best_epoch": 69,
+            "best_dev_slot_f1": 0.6007192593953856,
+            "best_dev_intent_acc": 0.8518072289156626,
+            "best_score": 0.6007192593953856,
+            "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p001_run_2_seed_43.png",
+            "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p001_run_2_seed_43.pt",
+            "runs": [
+                {
+                    "run": 1,
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 1,
+                    "best_dev_slot_f1": 0.14736284124039228,
+                    "best_dev_intent_acc": 0.7369477911646586,
+                    "best_score": 0.14736284124039228,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p001_run_1_seed_42.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p001_run_1_seed_42.pt"
+                },
+                {
+                    "run": 2,
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 107,
+                    "best_dev_slot_f1": 0.8980311489861886,
+                    "best_dev_intent_acc": 0.9397590361445783,
+                    "best_score": 0.8980311489861886,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p001_run_2_seed_43.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p001_run_2_seed_43.pt"
+                },
+                {
+                    "run": 3,
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 1,
+                    "best_dev_slot_f1": 0.17430539064355263,
+                    "best_dev_intent_acc": 0.7369477911646586,
+                    "best_score": 0.17430539064355263,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p001_run_3_seed_44.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p001_run_3_seed_44.pt"
+                },
+                {
+                    "run": 4,
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 133,
+                    "best_dev_slot_f1": 0.8890829694323145,
+                    "best_dev_intent_acc": 0.9257028112449799,
+                    "best_score": 0.8890829694323145,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p001_run_4_seed_45.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p001_run_4_seed_45.pt"
+                },
+                {
+                    "run": 5,
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 101,
+                    "best_dev_slot_f1": 0.89481394667448,
+                    "best_dev_intent_acc": 0.9196787148594378,
+                    "best_score": 0.89481394667448,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p001_run_5_seed_46.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p001_run_5_seed_46.pt"
+                }
+            ],
+            "best_dev_slot_f1_std": 0.3592771919814378,
+            "best_dev_intent_acc_std": 0.09400850702759923,
+            "best_score_std": 0.3592771919814378,
+            "learning_rate": 0.001
+        },
+        {
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 20,
+                "n_heads": 1,
+                "num_layers": 1,
+                "ff_dim": 20,
+                "dropout": 0.0
+            },
+            "best_epoch": 78,
+            "best_dev_slot_f1": 0.9120746104346033,
+            "best_dev_intent_acc": 0.9562248995983935,
+            "best_score": 0.9120746104346033,
+            "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p002_run_3_seed_44.png",
+            "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p002_run_3_seed_44.pt",
+            "runs": [
+                {
+                    "run": 1,
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 69,
+                    "best_dev_slot_f1": 0.9073313782991201,
+                    "best_dev_intent_acc": 0.9558232931726908,
+                    "best_score": 0.9073313782991201,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p002_run_1_seed_42.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p002_run_1_seed_42.pt"
+                },
+                {
+                    "run": 2,
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 61,
+                    "best_dev_slot_f1": 0.9118165784832452,
+                    "best_dev_intent_acc": 0.9538152610441767,
+                    "best_score": 0.9118165784832452,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p002_run_2_seed_43.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p002_run_2_seed_43.pt"
+                },
+                {
+                    "run": 3,
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 101,
+                    "best_dev_slot_f1": 0.9243401759530792,
+                    "best_dev_intent_acc": 0.9678714859437751,
+                    "best_score": 0.9243401759530792,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p002_run_3_seed_44.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p002_run_3_seed_44.pt"
+                },
+                {
+                    "run": 4,
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 93,
+                    "best_dev_slot_f1": 0.9041095890410958,
+                    "best_dev_intent_acc": 0.9437751004016064,
+                    "best_score": 0.9041095890410958,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p002_run_4_seed_45.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p002_run_4_seed_45.pt"
+                },
+                {
+                    "run": 5,
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 65,
+                    "best_dev_slot_f1": 0.9127753303964758,
+                    "best_dev_intent_acc": 0.9598393574297188,
+                    "best_score": 0.9127753303964758,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p002_run_5_seed_46.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p002_run_5_seed_46.pt"
+                }
+            ],
+            "best_dev_slot_f1_std": 0.006883916085064139,
+            "best_dev_intent_acc_std": 0.007869846563158825,
+            "best_score_std": 0.006883916085064139,
+            "learning_rate": 0.002
+        },
+        {
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 20,
+                "n_heads": 1,
+                "num_layers": 1,
+                "ff_dim": 20,
+                "dropout": 0.0
+            },
+            "best_epoch": 53,
+            "best_dev_slot_f1": 0.9115341427730644,
+            "best_dev_intent_acc": 0.9502008032128515,
+            "best_score": 0.9115341427730644,
+            "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p003_run_2_seed_43.png",
+            "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p003_run_2_seed_43.pt",
+            "runs": [
+                {
+                    "run": 1,
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 54,
+                    "best_dev_slot_f1": 0.908930669800235,
+                    "best_dev_intent_acc": 0.9578313253012049,
+                    "best_score": 0.908930669800235,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p003_run_1_seed_42.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p003_run_1_seed_42.pt"
+                },
+                {
+                    "run": 2,
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 50,
+                    "best_dev_slot_f1": 0.9219899911686782,
+                    "best_dev_intent_acc": 0.9578313253012049,
+                    "best_score": 0.9219899911686782,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p003_run_2_seed_43.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p003_run_2_seed_43.pt"
+                },
+                {
+                    "run": 3,
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 37,
+                    "best_dev_slot_f1": 0.8977072310405644,
+                    "best_dev_intent_acc": 0.9538152610441767,
+                    "best_score": 0.8977072310405644,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p003_run_3_seed_44.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p003_run_3_seed_44.pt"
+                },
+                {
+                    "run": 4,
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 82,
+                    "best_dev_slot_f1": 0.9121071012805588,
+                    "best_dev_intent_acc": 0.9477911646586346,
+                    "best_score": 0.9121071012805588,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p003_run_4_seed_45.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p003_run_4_seed_45.pt"
+                },
+                {
+                    "run": 5,
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 42,
+                    "best_dev_slot_f1": 0.916935720575286,
+                    "best_dev_intent_acc": 0.9337349397590361,
+                    "best_score": 0.916935720575286,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p003_run_5_seed_46.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p003_run_5_seed_46.pt"
+                }
+            ],
+            "best_dev_slot_f1_std": 0.008207212065682517,
+            "best_dev_intent_acc_std": 0.009016041895840848,
+            "best_score_std": 0.008207212065682517,
+            "learning_rate": 0.003
+        },
+        {
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 20,
+                "n_heads": 1,
+                "num_layers": 1,
+                "ff_dim": 20,
+                "dropout": 0.0
+            },
+            "best_epoch": 38,
+            "best_dev_slot_f1": 0.9222340448479889,
+            "best_dev_intent_acc": 0.9558232931726908,
+            "best_score": 0.9222340448479889,
+            "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p005_run_3_seed_44.png",
+            "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p005_run_3_seed_44.pt",
+            "runs": [
+                {
+                    "run": 1,
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 44,
+                    "best_dev_slot_f1": 0.9237089201877934,
+                    "best_dev_intent_acc": 0.9457831325301205,
+                    "best_score": 0.9237089201877934,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p005_run_1_seed_42.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p005_run_1_seed_42.pt"
+                },
+                {
+                    "run": 2,
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 35,
+                    "best_dev_slot_f1": 0.9265007320644216,
+                    "best_dev_intent_acc": 0.9718875502008032,
+                    "best_score": 0.9265007320644216,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p005_run_2_seed_43.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p005_run_2_seed_43.pt"
+                },
+                {
+                    "run": 3,
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 48,
+                    "best_dev_slot_f1": 0.9289071680376029,
+                    "best_dev_intent_acc": 0.963855421686747,
+                    "best_score": 0.9289071680376029,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p005_run_3_seed_44.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p005_run_3_seed_44.pt"
+                },
+                {
+                    "run": 4,
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 39,
+                    "best_dev_slot_f1": 0.9169590643274853,
+                    "best_dev_intent_acc": 0.9558232931726908,
+                    "best_score": 0.9169590643274853,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p005_run_4_seed_45.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p005_run_4_seed_45.pt"
+                },
+                {
+                    "run": 5,
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 24,
+                    "best_dev_slot_f1": 0.9150943396226415,
+                    "best_dev_intent_acc": 0.9417670682730924,
+                    "best_score": 0.9150943396226415,
+                    "history_plot": "outputs\\part2a\\baseline_lr_tuning\\history_lr_0p005_run_5_seed_46.png",
+                    "model_path": "outputs\\part2a\\baseline_lr_tuning\\checkpoints\\model_lr_0p005_run_5_seed_46.pt"
+                }
+            ],
+            "best_dev_slot_f1_std": 0.005361180100894624,
+            "best_dev_intent_acc_std": 0.011144126044587619,
+            "best_score_std": 0.005361180100894624,
+            "learning_rate": 0.005
+        }
+    ],
+    "best": {
+        "learning_rate": 0.005,
+        "best_epoch": 48,
+        "dev_slot_f1": 0.9289071680376029,
+        "dev_intent_acc": 0.963855421686747,
+        "test_slot_f1": 0.88218793828892,
+        "test_intent_acc": 0.9193729003359462,
+        "model_config": {
+            "pos_emb_size": 1024,
+            "d_model": 20,
+            "n_heads": 1,
+            "num_layers": 1,
+            "ff_dim": 20,
+            "dropout": 0.0
+        },
+        "model_path": "outputs\\part2a\\baseline_lr_tuning\\best_model.pt",
+        "lr_plot": "outputs\\part2a\\baseline_lr_tuning\\learning_rate_tuning.png"
+    }
+}

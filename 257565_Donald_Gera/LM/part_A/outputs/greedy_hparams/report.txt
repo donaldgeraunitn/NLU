@@ -1,0 +1,82 @@
+greedy_hyperparameter_tuning report
+========================================
+
+seed: 42
+device: cuda:0
+model_class: GPT2Baseline
+learning_rate: 0.0005
+fixed_model_hyperparameters: None
+fixed_training_hyperparameters: {'train_batch_size': 8, 'eval_batch_size': 16, 'n_epochs': 100, 'patience': 3, 'weight_decay': 0.01, 'grad_clip': None, 'optimizer': 'AdamW'}
+
+
+Greedy steps:
+{
+    "d_model": 40,
+    "dev_ppl": 46.0716902594019,
+    "model_config": {
+        "pos_emb_size": 1024,
+        "d_model": 40,
+        "n_heads": 1,
+        "num_layers": 1,
+        "ff_dim": 20,
+        "dropout": 0.0
+    },
+    "plot": "outputs\\greedy_hparams\\tuning_d_model.png"
+}
+{
+    "n_heads": 4,
+    "dev_ppl": 45.0381466412639,
+    "model_config": {
+        "pos_emb_size": 1024,
+        "d_model": 40,
+        "n_heads": 4,
+        "num_layers": 1,
+        "ff_dim": 20,
+        "dropout": 0.0
+    },
+    "plot": "outputs\\greedy_hparams\\tuning_n_heads.png"
+}
+{
+    "num_layers": 4,
+    "dev_ppl": 43.38594620104076,
+    "model_config": {
+        "pos_emb_size": 1024,
+        "d_model": 40,
+        "n_heads": 4,
+        "num_layers": 4,
+        "ff_dim": 20,
+        "dropout": 0.0
+    },
+    "plot": "outputs\\greedy_hparams\\tuning_num_layers.png"
+}
+{
+    "ff_dim": 160,
+    "dev_ppl": 42.51983626684179,
+    "model_config": {
+        "pos_emb_size": 1024,
+        "d_model": 40,
+        "n_heads": 4,
+        "num_layers": 4,
+        "ff_dim": 160,
+        "dropout": 0.0
+    },
+    "plot": "outputs\\greedy_hparams\\tuning_ff_dim.png"
+}
+
+Best configuration:
+{
+    "learning_rate": 0.0005,
+    "best_epoch": 32,
+    "dev_ppl": 42.51983626684179,
+    "test_loss": 3.6282890980757703,
+    "test_ppl": 37.64834885140131,
+    "model_config": {
+        "pos_emb_size": 1024,
+        "d_model": 40,
+        "n_heads": 4,
+        "num_layers": 4,
+        "ff_dim": 160,
+        "dropout": 0.0
+    },
+    "model_path": "outputs\\greedy_hparams\\best_model.pt"
+}

@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter Notebook temporary files
+.ipynb_checkpoints/
+
+# Local helper scripts
+get_best.py
+
+# LaTeX source files: keep only final PDFs
+**/report_template/*.tex
+**/report_template/*.bst
+**/report_template/*.sty
+**/report_template/*.bib
+
+**/report_temp/*.tex
+**/report_temp/*.bst
+**/report_temp/*.sty
+**/report_temp/*.bib
+
+**/report/*.tex
+**/report/*.bst
+**/report/*.sty
+**/report/*.bib
+
+# LaTeX template subdirectories
+**/report_template/IEEEtran/
+**/report_template/images/
+**/report_temp/IEEEtran/
+**/report_temp/images/
+**/report/IEEEtran/
+**/report/images/
+
+# Keep important PDFs
+!**/template.pdf
+!**/report.pdf

@@ -1,0 +1,162 @@
+{
+    "experiment_name": "greedy_hyperparameter_tuning",
+    "selection_metric": "slot_f1",
+    "runs_per_config": 5,
+    "learning_rate": 0.005,
+    "steps": [
+        {
+            "parameter_name": "d_model",
+            "report_path": "outputs\\part2a\\greedy_hparams\\d_model\\report.json",
+            "best": {
+                "parameter_name": "d_model",
+                "value": 80,
+                "model_config": {
+                    "pos_emb_size": 1024,
+                    "d_model": 80,
+                    "n_heads": 1,
+                    "num_layers": 1,
+                    "ff_dim": 20,
+                    "dropout": 0.0
+                },
+                "learning_rate": 0.005,
+                "dev": {
+                    "slot_f1": {
+                        "mean": 0.9451263523512589,
+                        "std": 0.003995940882625811
+                    },
+                    "intent_acc": {
+                        "mean": 0.9662650602409639,
+                        "std": 0.006273292912374819
+                    },
+                    "selection_score": {
+                        "mean": 0.9451263523512589,
+                        "std": 0.003995940882625811
+                    }
+                },
+                "best_individual_checkpoint": "outputs\\part2a\\greedy_hparams\\d_model\\best_model.pt"
+            }
+        },
+        {
+            "parameter_name": "n_heads",
+            "report_path": "outputs\\part2a\\greedy_hparams\\n_heads\\report.json",
+            "best": {
+                "parameter_name": "n_heads",
+                "value": 1,
+                "model_config": {
+                    "pos_emb_size": 1024,
+                    "d_model": 80,
+                    "n_heads": 1,
+                    "num_layers": 1,
+                    "ff_dim": 20,
+                    "dropout": 0.0
+                },
+                "learning_rate": 0.005,
+                "dev": {
+                    "slot_f1": {
+                        "mean": 0.9451263523512589,
+                        "std": 0.003995940882625811
+                    },
+                    "intent_acc": {
+                        "mean": 0.9662650602409639,
+                        "std": 0.006273292912374819
+                    },
+                    "selection_score": {
+                        "mean": 0.9451263523512589,
+                        "std": 0.003995940882625811
+                    }
+                },
+                "best_individual_checkpoint": "outputs\\part2a\\greedy_hparams\\n_heads\\best_model.pt"
+            }
+        },
+        {
+            "parameter_name": "num_layers",
+            "report_path": "outputs\\part2a\\greedy_hparams\\num_layers\\report.json",
+            "best": {
+                "parameter_name": "num_layers",
+                "value": 3,
+                "model_config": {
+                    "pos_emb_size": 1024,
+                    "d_model": 80,
+                    "n_heads": 1,
+                    "num_layers": 3,
+                    "ff_dim": 20,
+                    "dropout": 0.0
+                },
+                "learning_rate": 0.005,
+                "dev": {
+                    "slot_f1": {
+                        "mean": 0.9454840675914195,
+                        "std": 0.0031254871656136184
+                    },
+                    "intent_acc": {
+                        "mean": 0.9722891566265061,
+                        "std": 0.005447654604919896
+                    },
+                    "selection_score": {
+                        "mean": 0.9454840675914195,
+                        "std": 0.0031254871656136184
+                    }
+                },
+                "best_individual_checkpoint": "outputs\\part2a\\greedy_hparams\\num_layers\\best_model.pt"
+            }
+        },
+        {
+            "parameter_name": "ff_dim",
+            "report_path": "outputs\\part2a\\greedy_hparams\\ff_dim\\report.json",
+            "best": {
+                "parameter_name": "ff_dim",
+                "value": 80,
+                "model_config": {
+                    "pos_emb_size": 1024,
+                    "d_model": 80,
+                    "n_heads": 1,
+                    "num_layers": 3,
+                    "ff_dim": 80,
+                    "dropout": 0.0
+                },
+                "learning_rate": 0.005,
+                "dev": {
+                    "slot_f1": {
+                        "mean": 0.9468100141214644,
+                        "std": 0.00387875988511146
+                    },
+                    "intent_acc": {
+                        "mean": 0.9714859437751004,
+                        "std": 0.0040955980028857565
+                    },
+                    "selection_score": {
+                        "mean": 0.9468100141214644,
+                        "std": 0.00387875988511146
+                    }
+                },
+                "best_individual_checkpoint": "outputs\\part2a\\greedy_hparams\\ff_dim\\best_model.pt"
+            }
+        }
+    ],
+    "best": {
+        "model_config": {
+            "pos_emb_size": 1024,
+            "d_model": 80,
+            "n_heads": 1,
+            "num_layers": 3,
+            "ff_dim": 80,
+            "dropout": 0.0
+        },
+        "learning_rate": 0.005,
+        "dev": {
+            "slot_f1": {
+                "mean": 0.9468100141214644,
+                "std": 0.00387875988511146
+            },
+            "intent_acc": {
+                "mean": 0.9714859437751004,
+                "std": 0.0040955980028857565
+            },
+            "selection_score": {
+                "mean": 0.9468100141214644,
+                "std": 0.00387875988511146
+            }
+        },
+        "best_individual_checkpoint": "outputs\\part2a\\greedy_hparams\\ff_dim\\best_model.pt"
+    }
+}

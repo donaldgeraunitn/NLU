@@ -1,0 +1,376 @@
+{
+    "experiment_name": "greedy_d_model",
+    "parameter_name": "d_model",
+    "candidate_values": [
+        20,
+        40,
+        80,
+        160
+    ],
+    "runs_per_config": 5,
+    "seed": 42,
+    "data_seed": 42,
+    "dataset_dir": "dataset/ATIS",
+    "selection_metric": "slot_f1",
+    "fixed_training_hyperparameters": {
+        "train_batch_size": 128,
+        "eval_batch_size": 64,
+        "n_epochs": 200,
+        "patience": 3,
+        "eval_every": 5,
+        "weight_decay": 0.01,
+        "optimizer": "AdamW"
+    },
+    "base_model_config": {
+        "pos_emb_size": 1024,
+        "d_model": 20,
+        "n_heads": 1,
+        "num_layers": 1,
+        "ff_dim": 20,
+        "dropout": 0.0
+    },
+    "base_learning_rate": 0.005,
+    "results": [
+        {
+            "value": 20,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 20,
+                "n_heads": 1,
+                "num_layers": 1,
+                "ff_dim": 20,
+                "dropout": 0.0
+            },
+            "learning_rate": 0.005,
+            "dev": {
+                "slot_f1": {
+                    "mean": 0.9338345506806258,
+                    "std": 0.00541218192034042
+                },
+                "intent_acc": {
+                    "mean": 0.9550200803212852,
+                    "std": 0.01903292467642213
+                },
+                "selection_score": {
+                    "mean": 0.9338345506806258,
+                    "std": 0.00541218192034042
+                }
+            },
+            "runs": [
+                {
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 65,
+                    "dev_slot_f1": 0.9329017068864038,
+                    "dev_intent_acc": 0.9558232931726908,
+                    "selection_score": 0.9329017068864038,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_20\\run_01_seed_42\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_20\\run_01_seed_42\\history.png"
+                },
+                {
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 110,
+                    "dev_slot_f1": 0.940901111761264,
+                    "dev_intent_acc": 0.9799196787148594,
+                    "selection_score": 0.940901111761264,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_20\\run_02_seed_43\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_20\\run_02_seed_43\\history.png"
+                },
+                {
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 65,
+                    "dev_slot_f1": 0.9372976155431262,
+                    "dev_intent_acc": 0.963855421686747,
+                    "selection_score": 0.9372976155431262,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_20\\run_03_seed_44\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_20\\run_03_seed_44\\history.png"
+                },
+                {
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 105,
+                    "dev_slot_f1": 0.9246996777029006,
+                    "dev_intent_acc": 0.9216867469879518,
+                    "selection_score": 0.9246996777029006,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_20\\run_04_seed_45\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_20\\run_04_seed_45\\history.png"
+                },
+                {
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 80,
+                    "dev_slot_f1": 0.933372641509434,
+                    "dev_intent_acc": 0.9538152610441767,
+                    "selection_score": 0.933372641509434,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_20\\run_05_seed_46\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_20\\run_05_seed_46\\history.png"
+                }
+            ]
+        },
+        {
+            "value": 40,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 40,
+                "n_heads": 1,
+                "num_layers": 1,
+                "ff_dim": 20,
+                "dropout": 0.0
+            },
+            "learning_rate": 0.005,
+            "dev": {
+                "slot_f1": {
+                    "mean": 0.9378277555483916,
+                    "std": 0.002913679407889313
+                },
+                "intent_acc": {
+                    "mean": 0.9674698795180723,
+                    "std": 0.006010694597227204
+                },
+                "selection_score": {
+                    "mean": 0.9378277555483916,
+                    "std": 0.002913679407889313
+                }
+            },
+            "runs": [
+                {
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 50,
+                    "dev_slot_f1": 0.9358711566617862,
+                    "dev_intent_acc": 0.9779116465863453,
+                    "selection_score": 0.9358711566617862,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_40\\run_01_seed_42\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_40\\run_01_seed_42\\history.png"
+                },
+                {
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 50,
+                    "dev_slot_f1": 0.9433962264150944,
+                    "dev_intent_acc": 0.9618473895582329,
+                    "selection_score": 0.9433962264150944,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_40\\run_02_seed_43\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_40\\run_02_seed_43\\history.png"
+                },
+                {
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 40,
+                    "dev_slot_f1": 0.9356450191007935,
+                    "dev_intent_acc": 0.9658634538152611,
+                    "selection_score": 0.9356450191007935,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_40\\run_03_seed_44\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_40\\run_03_seed_44\\history.png"
+                },
+                {
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 45,
+                    "dev_slot_f1": 0.9380686821250366,
+                    "dev_intent_acc": 0.9618473895582329,
+                    "selection_score": 0.9380686821250366,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_40\\run_04_seed_45\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_40\\run_04_seed_45\\history.png"
+                },
+                {
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 75,
+                    "dev_slot_f1": 0.9361576934392468,
+                    "dev_intent_acc": 0.9698795180722891,
+                    "selection_score": 0.9361576934392468,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_40\\run_05_seed_46\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_40\\run_05_seed_46\\history.png"
+                }
+            ]
+        },
+        {
+            "value": 80,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 80,
+                "n_heads": 1,
+                "num_layers": 1,
+                "ff_dim": 20,
+                "dropout": 0.0
+            },
+            "learning_rate": 0.005,
+            "dev": {
+                "slot_f1": {
+                    "mean": 0.9451263523512589,
+                    "std": 0.003995940882625811
+                },
+                "intent_acc": {
+                    "mean": 0.9662650602409639,
+                    "std": 0.006273292912374819
+                },
+                "selection_score": {
+                    "mean": 0.9451263523512589,
+                    "std": 0.003995940882625811
+                }
+            },
+            "runs": [
+                {
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 35,
+                    "dev_slot_f1": 0.9443298969072164,
+                    "dev_intent_acc": 0.9598393574297188,
+                    "selection_score": 0.9443298969072164,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_80\\run_01_seed_42\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_80\\run_01_seed_42\\history.png"
+                },
+                {
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 45,
+                    "dev_slot_f1": 0.950220913107511,
+                    "dev_intent_acc": 0.9698795180722891,
+                    "selection_score": 0.950220913107511,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_80\\run_02_seed_43\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_80\\run_02_seed_43\\history.png"
+                },
+                {
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 60,
+                    "dev_slot_f1": 0.9471210340775558,
+                    "dev_intent_acc": 0.9738955823293173,
+                    "selection_score": 0.9471210340775558,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_80\\run_03_seed_44\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_80\\run_03_seed_44\\history.png"
+                },
+                {
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 55,
+                    "dev_slot_f1": 0.9458186101295643,
+                    "dev_intent_acc": 0.9698795180722891,
+                    "selection_score": 0.9458186101295643,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_80\\run_04_seed_45\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_80\\run_04_seed_45\\history.png"
+                },
+                {
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 30,
+                    "dev_slot_f1": 0.9381413075344474,
+                    "dev_intent_acc": 0.9578313253012049,
+                    "selection_score": 0.9381413075344474,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_80\\run_05_seed_46\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_80\\run_05_seed_46\\history.png"
+                }
+            ]
+        },
+        {
+            "value": 160,
+            "model_config": {
+                "pos_emb_size": 1024,
+                "d_model": 160,
+                "n_heads": 1,
+                "num_layers": 1,
+                "ff_dim": 20,
+                "dropout": 0.0
+            },
+            "learning_rate": 0.005,
+            "dev": {
+                "slot_f1": {
+                    "mean": 0.937150092908231,
+                    "std": 0.005412715309252047
+                },
+                "intent_acc": {
+                    "mean": 0.9409638554216867,
+                    "std": 0.014345840240555598
+                },
+                "selection_score": {
+                    "mean": 0.937150092908231,
+                    "std": 0.005412715309252047
+                }
+            },
+            "runs": [
+                {
+                    "seed": 42,
+                    "data_seed": 42,
+                    "best_epoch": 20,
+                    "dev_slot_f1": 0.9293876355112803,
+                    "dev_intent_acc": 0.927710843373494,
+                    "selection_score": 0.9293876355112803,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_160\\run_01_seed_42\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_160\\run_01_seed_42\\history.png"
+                },
+                {
+                    "seed": 43,
+                    "data_seed": 42,
+                    "best_epoch": 50,
+                    "dev_slot_f1": 0.9339181286549707,
+                    "dev_intent_acc": 0.9598393574297188,
+                    "selection_score": 0.9339181286549707,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_160\\run_02_seed_43\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_160\\run_02_seed_43\\history.png"
+                },
+                {
+                    "seed": 44,
+                    "data_seed": 42,
+                    "best_epoch": 60,
+                    "dev_slot_f1": 0.9361452841241945,
+                    "dev_intent_acc": 0.9216867469879518,
+                    "selection_score": 0.9361452841241945,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_160\\run_03_seed_44\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_160\\run_03_seed_44\\history.png"
+                },
+                {
+                    "seed": 45,
+                    "data_seed": 42,
+                    "best_epoch": 30,
+                    "dev_slot_f1": 0.9443298969072164,
+                    "dev_intent_acc": 0.9518072289156626,
+                    "selection_score": 0.9443298969072164,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_160\\run_04_seed_45\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_160\\run_04_seed_45\\history.png"
+                },
+                {
+                    "seed": 46,
+                    "data_seed": 42,
+                    "best_epoch": 80,
+                    "dev_slot_f1": 0.9419695193434936,
+                    "dev_intent_acc": 0.9437751004016064,
+                    "selection_score": 0.9419695193434936,
+                    "checkpoint_path": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_160\\run_05_seed_46\\model.pt",
+                    "history_plot": "outputs\\part2a\\greedy_hparams\\d_model\\d_model_160\\run_05_seed_46\\history.png"
+                }
+            ]
+        }
+    ],
+    "best": {
+        "parameter_name": "d_model",
+        "value": 80,
+        "model_config": {
+            "pos_emb_size": 1024,
+            "d_model": 80,
+            "n_heads": 1,
+            "num_layers": 1,
+            "ff_dim": 20,
+            "dropout": 0.0
+        },
+        "learning_rate": 0.005,
+        "dev": {
+            "slot_f1": {
+                "mean": 0.9451263523512589,
+                "std": 0.003995940882625811
+            },
+            "intent_acc": {
+                "mean": 0.9662650602409639,
+                "std": 0.006273292912374819
+            },
+            "selection_score": {
+                "mean": 0.9451263523512589,
+                "std": 0.003995940882625811
+            }
+        },
+        "best_individual_checkpoint": "outputs\\part2a\\greedy_hparams\\d_model\\best_model.pt"
+    },
+    "tuning_plot": "outputs\\part2a\\greedy_hparams\\d_model\\tuning.png"
+}
