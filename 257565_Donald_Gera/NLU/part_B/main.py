@@ -3,12 +3,13 @@ from pathlib import Path
 
 import torch
 
-from functions import run
+from functions import eval_model_saved, load_checkpoint, run
 from utils import make_dataloaders
 
 
+# Expose the training, evaluation and backbone-selection options through the CLI.
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument("--model", choices=["gpt2", "bert", "both"], default="both")
     parser.add_argument("--dataset-dir", default="dataset/ATIS")
     parser.add_argument("--output-dir", default="outputs")
@@ -34,11 +35,36 @@ def parse_args():
     parser.add_argument("--data-seed", type=int, default=42)
     parser.add_argument("--device", default=None)
 
+    parser.add_argument(
+        "--eval",
+        action="store_true",
+        help="Evaluate a saved checkpoint without training.",
+    )
+    parser.add_argument(
+        "--checkpoint",
+        type=str,
+        default=None,
+        help="Path to the saved checkpoint used with --eval.",
+    )
+
     return parser.parse_args()
 
 
-def run_model(args, model_type, model_name, lr, device):
-    train_loader, dev_loader, test_loader, lang, tokenizer, _, _, _ = make_dataloaders(
+def print_model_info(model_type, model_name, train_loader, dev_loader, test_loader, lang):
+    print("=" * 89)
+    print("Model:", model_type)
+    print("Checkpoint:", model_name)
+    print("Train samples:", len(train_loader.dataset))
+    print("Dev samples:", len(dev_loader.dataset))
+    print("Test samples:", len(test_loader.dataset))
+    print("Slot labels:", len(lang.slot2id))
+    print("Intent labels:", len(lang.intent2id))
+    print("=" * 89)
+
+
+# Build a separate tokenizer and collation pipeline for the selected pretrained backbone.
+def make_model_dataloaders(args, model_type, model_name, device):
+    return make_dataloaders(
         device=device,
         model_type=model_type,
         model_name=model_name,
@@ -51,15 +77,17 @@ def run_model(args, model_type, model_name, lr, device):
         max_length=args.max_length,
     )
 
-    print("=" * 89)
-    print("Model:", model_type)
-    print("Checkpoint:", model_name)
-    print("Train samples:", len(train_loader.dataset))
-    print("Dev samples:", len(dev_loader.dataset))
-    print("Test samples:", len(test_loader.dataset))
-    print("Slot labels:", len(lang.slot2id))
-    print("Intent labels:", len(lang.intent2id))
-    print("=" * 89)
+
+# Train and evaluate repeated runs for one backbone, writing results under outputs/<model_type>/.
+def run_model(args, model_type, model_name, lr, device):
+    train_loader, dev_loader, test_loader, lang, tokenizer, _, _, _ = make_model_dataloaders(
+        args,
+        model_type,
+        model_name,
+        device,
+    )
+
+    print_model_info(model_type, model_name, train_loader, dev_loader, test_loader, lang)
 
     return run(
         train_loader=train_loader,
@@ -82,11 +110,53 @@ def run_model(args, model_type, model_name, lr, device):
     )
 
 
+# Rebuild the correct tokenizer and test loader from the metadata stored in a saved checkpoint.
+def evaluate_saved_model(args, device):
+    if args.checkpoint is None:
+        raise ValueError("--checkpoint is required when --eval is specified.")
+
+    if args.model == "both":
+        raise ValueError("When using --eval, choose exactly one model with --model bert or --model gpt2.")
+
+    # The checkpoint determines the exact pretrained backbone used during training.
+    checkpoint = load_checkpoint(args.checkpoint, device)
+    model_type = checkpoint["model_type"]
+    model_name = checkpoint["model_name"]
+
+    if args.model != model_type:
+        raise ValueError(
+            f"The selected model is '{args.model}', but the checkpoint contains '{model_type}'."
+        )
+
+    train_loader, dev_loader, test_loader, lang, tokenizer, _, _, _ = make_model_dataloaders(
+        args,
+        model_type,
+        model_name,
+        device,
+    )
+
+    print_model_info(model_type, model_name, train_loader, dev_loader, test_loader, lang)
+
+    return eval_model_saved(
+        checkpoint_path=args.checkpoint,
+        test_loader=test_loader,
+        lang=lang,
+        tokenizer=tokenizer,
+        device=device,
+    )
+
+
 def main():
     args = parse_args()
     device = args.device or ("cuda:0" if torch.cuda.is_available() else "cpu")
     print("Device:", device)
 
+    # Evaluation-only mode skips all training and requires one explicit backbone.
+    if args.eval:
+        evaluate_saved_model(args, device)
+        return
+
+    # Without --eval, train the selected backbone or both backbones sequentially.
     if args.model in ["gpt2", "both"]:
         run_model(args, "gpt2", args.gpt2_model_name, args.gpt2_lr, device)
 

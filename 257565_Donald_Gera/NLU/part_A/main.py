@@ -3,11 +3,12 @@ from pathlib import Path
 
 import torch
 
-from functions import get_intent_accuracy, get_slot_f1, load_report, save_report, set_seed, tune
+from functions import eval_model_saved, load_report, save_report, set_seed, tune
 from model import GPT2
 from utils import make_dataloaders, make_datasets
 
 
+# Small baseline architecture used as the starting point of the staged search.
 FIXED_MODEL_CONFIG = {
     "pos_emb_size": 1024,
     "d_model": 20,
@@ -17,6 +18,7 @@ FIXED_MODEL_CONFIG = {
     "dropout": 0.0,
 }
 
+# Candidate values used by the predefined experiments unless they are overridden from the CLI.
 DEFAULT_LEARNING_RATES = [0.0005, 0.001, 0.002, 0.003, 0.005]
 DEFAULT_D_MODEL_VALUES = [20, 40, 80, 160]
 DEFAULT_N_HEADS_VALUES = [1, 2, 4, 8]
@@ -26,13 +28,28 @@ DEFAULT_DROPOUT_VALUES = [0.1, 0.2, 0.3, 0.5]
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Part 2.A - ATIS intent classification and slot filling")
+    parser = argparse.ArgumentParser(
+        description="Part A - ATIS intent classification and slot filling",
+        allow_abbrev=False,
+    )
 
     parser.add_argument(
         "--experiment",
         type=str,
         default="baseline_lr",
         choices=["baseline_lr", "greedy_hparams", "final_lr", "dropout", "final_runs", "custom"],
+    )
+
+    parser.add_argument(
+        "--eval",
+        action="store_true",
+        help="Evaluate a saved checkpoint on the test set without training.",
+    )
+    parser.add_argument(
+        "--checkpoint",
+        type=str,
+        default=None,
+        help="Path to the checkpoint used with --eval.",
     )
 
     parser.add_argument("--dataset_dir", type=str, default="dataset/ATIS")
@@ -86,21 +103,23 @@ def get_device(args):
     return torch.device(args.device)
 
 
+# Keep the generated reports, plots and checkpoints separated by experiment stage.
 def get_output_dir(args):
     if args.output_dir is not None:
         return args.output_dir
 
     mapping = {
-        "baseline_lr": "outputs/part2a/baseline_lr_tuning",
-        "greedy_hparams": "outputs/part2a/greedy_hparams",
-        "final_lr": "outputs/part2a/final_lr_readjustment",
-        "dropout": "outputs/part2a/dropout_tuning",
-        "final_runs": "outputs/part2a/final_runs",
-        "custom": "outputs/part2a/custom",
+        "baseline_lr": "outputs/baseline_lr_tuning",
+        "greedy_hparams": "outputs/greedy_hparams",
+        "final_lr": "outputs/final_lr_readjustment",
+        "dropout": "outputs/dropout_tuning",
+        "final_runs": "outputs/final_runs",
+        "custom": "outputs/custom",
     }
     return mapping[args.experiment]
 
 
+# Later stages reuse the best configuration saved by the previous experiment.
 def get_model_config_from_report(report, default_config):
     if report is not None and "best" in report and "model_config" in report["best"]:
         return dict(report["best"]["model_config"])
@@ -138,6 +157,7 @@ def print_dataset_info(dataset_dir, data_seed):
     print(f"Intents:         {len(lang.intent2id)}")
 
 
+# Arguments shared by all training and tuning stages.
 def common_tune_args(args, device):
     return {
         "model_cls": GPT2,
@@ -181,6 +201,26 @@ def main():
     set_seed(args.seed)
 
     device = get_device(args)
+
+    # Evaluation-only mode rebuilds the model and dataset from a saved checkpoint.
+    if args.eval:
+        if args.checkpoint is None:
+            raise ValueError("--checkpoint is required when --eval is specified.")
+
+        print(f"Using device: {device}")
+        print(f"Dataset dir: {args.dataset_dir}")
+        print(f"Checkpoint:  {args.checkpoint}")
+
+        eval_model_saved(
+            model_cls=GPT2,
+            make_dataloaders_fn=make_dataloaders,
+            checkpoint_path=args.checkpoint,
+            device=device,
+            dataset_dir=args.dataset_dir,
+            eval_batch_size=args.eval_batch_size,
+        )
+        return
+
     output_dir = Path(get_output_dir(args))
     tune_args = common_tune_args(args, device)
 
@@ -192,6 +232,7 @@ def main():
     print(f"Output dir: {output_dir}")
     print_dataset_info(args.dataset_dir, args.data_seed)
 
+    # Stage 1: select the learning rate for the fixed baseline architecture.
     if args.experiment == "baseline_lr":
         report = tune(
             parameter_name="learning_rate",
@@ -204,12 +245,15 @@ def main():
             **tune_args,
         )
 
+    # Stage 2: tune one architectural parameter at a time, keeping each winner.
     elif args.experiment == "greedy_hparams":
         baseline_report = load_report(args.baseline_report)
         current_config = get_model_config_from_report(baseline_report, FIXED_MODEL_CONFIG)
         current_config["dropout"] = 0.0
         learning_rate = get_learning_rate_or_raise(args, baseline_report)
 
+        # The order is intentional: each step starts from the best configuration
+        # produced by the preceding step.
         search_space = [
             ("d_model", args.d_model_values),
             ("n_heads", args.n_heads_values),
@@ -253,6 +297,7 @@ def main():
         }
         save_report(report, output_dir / "report.json")
 
+    # Stage 3: readjust the learning rate after selecting the architecture.
     elif args.experiment == "final_lr":
         baseline_report = load_report(args.baseline_report)
         hparams_report = load_report(args.hparams_report)
@@ -273,6 +318,7 @@ def main():
             **tune_args,
         )
 
+    # Stage 4: evaluate dropout values on the selected architecture and learning rate.
     elif args.experiment == "dropout":
         baseline_report = load_report(args.baseline_report)
         hparams_report = load_report(args.hparams_report)
@@ -299,6 +345,7 @@ def main():
             **tune_args,
         )
 
+    # Repeat the best available configuration, optionally across multiple seeds.
     elif args.experiment == "final_runs":
         dropout_report = load_report(args.dropout_report)
         final_lr_report = load_report(args.final_lr_report)
@@ -327,6 +374,7 @@ def main():
         )
 
     else:  # custom
+        # Train a manually specified configuration without modifying the predefined search.
         model_config = dict(FIXED_MODEL_CONFIG)
         for key in ["d_model", "n_heads", "num_layers", "ff_dim", "dropout"]:
             value = getattr(args, key)

@@ -12,6 +12,7 @@ import torch.optim as optim
 from tqdm.auto import tqdm
 
 
+# Configure Python, NumPy, and PyTorch for reproducible experiment runs.
 def set_seed(seed):
     os.environ["PYTHONHASHSEED"] = str(seed)
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -27,6 +28,7 @@ def set_seed(seed):
     torch.backends.cudnn.benchmark = False
 
 
+# Initialize the linear layers of each model trained from scratch.
 def init_weights(mat):
     for m in mat.modules():
         if type(m) in [nn.Linear]:
@@ -35,6 +37,7 @@ def init_weights(mat):
                 m.bias.data.fill_(0.01)
 
 
+# Convert average cross-entropy loss to perplexity while avoiding overflow.
 def get_ppl(loss):
     if loss >= 50:
         return float("inf")
@@ -42,6 +45,7 @@ def get_ppl(loss):
 
 
 def train_loop(data, optimizer, criterion, model, grad_clip=None):
+    """Run one training epoch and return the token-weighted average loss."""
     model.train()
     loss_array = []
     number_of_tokens = []
@@ -52,13 +56,16 @@ def train_loop(data, optimizer, criterion, model, grad_clip=None):
         optimizer.zero_grad()
 
         output = model(input_ids)
+        # CrossEntropyLoss expects class scores before the sequence dimension.
         loss = criterion(output.permute(0, 2, 1), labels)
 
+        # Weight batch losses by non-padding token count before averaging.
         loss_array.append(loss.item() * int(n_tokens.item()))
         number_of_tokens.append(int(n_tokens.item()))
 
         loss.backward()
 
+        # Optional clipping limits unstable gradient updates in larger configurations.
         if grad_clip is not None:
             torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
 
@@ -71,15 +78,16 @@ def train_loop(data, optimizer, criterion, model, grad_clip=None):
     return sum(loss_array) / max(sum(number_of_tokens), 1)
 
 
-def eval_loop(data, criterion, model):
+def eval_loop(data, criterion, model, show_progress=True):
+    """Evaluate a loader without gradients and return perplexity and average loss."""
     model.eval()
     loss_array = []
     number_of_tokens = []
 
     with torch.no_grad():
-        pbar = tqdm(data, desc="Evaluating:", unit="batch", total=len(data))
+        iterator = tqdm(data, desc="Evaluating:", unit="batch", total=len(data)) if show_progress else data
 
-        for input_ids, labels, n_tokens in pbar:
+        for input_ids, labels, n_tokens in iterator:
             output = model(input_ids)
             loss = criterion(output.permute(0, 2, 1), labels)
 
@@ -90,6 +98,7 @@ def eval_loop(data, criterion, model):
     return get_ppl(loss), loss
 
 
+# Store a detached CPU copy so the best state is independent from later updates.
 def model_state_on_cpu(model):
     return {key: value.detach().cpu().clone() for key, value in model.state_dict().items()}
 
@@ -119,6 +128,7 @@ def train(
     """
     set_seed(seed)
 
+    # Each candidate is trained from scratch with reproducibly shuffled batches.
     train_loader, dev_loader, _ = make_dataloaders_fn(
         tokenizer=tokenizer,
         device=device,
@@ -127,10 +137,12 @@ def train(
         seed=seed,
     )
 
+    # Build the selected model variant and initialize its linear projections.
     model = model_cls(vocab_size=len(tokenizer), **model_config).to(device)
     model.apply(init_weights)
 
     optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
+    # Padding positions must not affect the next-token prediction loss.
     criterion = nn.CrossEntropyLoss(ignore_index=tokenizer.pad_token_id)
 
     losses_train = []
@@ -157,6 +169,7 @@ def train(
         if epoch % 10 == 0 or epoch == n_epochs:
             print ( f"epoch={epoch:03d} | train_loss={loss_train:.4f} | " f"dev_loss={loss_dev:.4f} | dev_ppl={ppl_dev:.2f}" )
 
+        # Keep the state with the lowest validation perplexity and reset patience on improvement.
         if best_model_state is None or ppl_dev < best_ppl - min_delta:
             best_ppl = ppl_dev
             best_epoch = epoch
@@ -165,10 +178,12 @@ def train(
         else:
             remaining_patience -= 1
 
+        # Stop once validation perplexity has failed to improve for the configured patience.
         if remaining_patience <= 0:
             print(f"Early stopping at epoch {epoch}.")
             break
 
+    # Return the best validation state rather than the final epoch state.
     model.load_state_dict(best_model_state)
 
     history = {
@@ -182,6 +197,7 @@ def train(
     return model, history, best_model_state
 
 
+# Rebuild and evaluate a saved state using the same test pipeline used after training.
 def eval_model_saved(
     model_cls,
     model_config,
@@ -191,9 +207,11 @@ def eval_model_saved(
     device,
     eval_batch_size=16,
     seed=42,
+    show_progress=True,
 ):
     set_seed(seed)
 
+    # Only the test loader is used, but the shared helper keeps preprocessing identical.
     _, _, test_loader = make_dataloaders_fn(
         tokenizer=tokenizer,
         device=device,
@@ -206,11 +224,12 @@ def eval_model_saved(
     model.load_state_dict(model_state)
 
     criterion = nn.CrossEntropyLoss(ignore_index=tokenizer.pad_token_id)
-    test_ppl, test_loss = eval_loop(test_loader, criterion, model)
+    test_ppl, test_loss = eval_loop(test_loader, criterion, model, show_progress=show_progress)
 
     return model, test_ppl, test_loss
 
 
+# Train every candidate for one selected hyperparameter and retain the best state.
 def tune(
     parameter_name,
     candidate_values,
@@ -246,11 +265,13 @@ def tune(
         model_config = dict(base_model_config)
         candidate_learning_rate = learning_rate
 
+        # LR tuning changes the optimizer; other searches modify the model configuration.
         if parameter_name == "learning_rate":
             candidate_learning_rate = value
         else:
             model_config[parameter_name] = value
 
+        # Multi-head attention requires an integer number of features per head.
         if not valid_model_config(model_config):
             print(f"Skipping invalid config: {model_config}")
             continue
@@ -298,6 +319,7 @@ def tune(
 
         results.append(result)
 
+        # Compare candidates only on development perplexity; test is used after selection.
         if best is None or history["best_ppl"] < best["history"]["best_ppl"]:
             best = {
                 "value": value,
@@ -313,6 +335,7 @@ def tune(
     return results, best
 
 
+# Execute one complete search stage: tune, test the winner, plot, and save a report.
 def run(
     parameter_name,
     candidate_values,
@@ -359,6 +382,7 @@ def run(
         experiment_name=experiment_name if parameter_name == "learning_rate" else None,
     )
 
+    # Store metadata using the field names expected by the following experiment stages.
     if parameter_name == "learning_rate":
         checkpoint_extra = {
             "best_learning_rate": float(best["learning_rate"]),
@@ -430,6 +454,7 @@ def run(
     return report
 
 
+# Evaluate the selected model on test and serialize everything needed to reload it.
 def save_best_model(
     output_dir,
     model_cls,
@@ -453,6 +478,7 @@ def save_best_model(
         seed=seed,
     )
 
+    # Every stage writes one consistently named best checkpoint inside its own output folder.
     checkpoint_path = Path(output_dir) / "best_model.pt"
 
     torch.save(
@@ -470,6 +496,7 @@ def save_best_model(
     return checkpoint_path, float(test_ppl), float(test_loss)
 
 
+# Save the train/dev loss curves for one candidate.
 def plot_history(history, output_path, title):
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -486,6 +513,7 @@ def plot_history(history, output_path, title):
     plt.close()
 
 
+# Save validation perplexity against the candidate values tested in one stage.
 def plot_tuning_results(results, output_path, parameter_name, title):
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -513,6 +541,7 @@ def checkpoint_tag(value):
     return str(value).replace(".", "p").replace("-", "m")
 
 
+# Write both a machine-readable JSON report and a compact text summary.
 def save_report(report, output_path):
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -548,6 +577,7 @@ def save_report(report, output_path):
         f.write("\n")
 
 
+# Missing reports return None so a caller can use defaults or raise a clear error.
 def load_report(path):
     path = Path(path)
 
@@ -558,6 +588,7 @@ def load_report(path):
         return json.load(f)
 
 
+# The embedding size must split evenly across the requested attention heads.
 def valid_model_config(config):
     return config["d_model"] % config["n_heads"] == 0
 

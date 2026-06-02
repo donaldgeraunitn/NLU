@@ -1,118 +1,140 @@
+from typing import Optional, Tuple, Union
+
 import torch
 import torch.nn as nn
 from transformers import GPT2LMHeadModel
+from transformers.models.gpt2.modeling_gpt2 import GPT2Attention
 
 
-class LoRA(nn.Module):
-    def __init__(self, in_features, out_features, rank, alpha):
-        super().__init__()
+# Extend the original GPT-2 attention layer with trainable LoRA adapters
+# for the query, key, and value projections. The pretrained projections
+# remain in place and their outputs receive low-rank additive updates.
+class CustomGPT2Attention(GPT2Attention):
+    def __init__(self, config, rank, alpha, is_cross_attention=False, layer_idx=None):
+        super().__init__(config, is_cross_attention=is_cross_attention, layer_idx=layer_idx)
 
         self.rank = rank
         self.alpha = alpha
+        # Scale each low-rank update according to the LoRA formulation.
         self.scaling = alpha / rank
 
-        self.A = nn.Linear(in_features, rank, bias=False)
-        self.B = nn.Linear(rank, out_features, bias=False)
+        # Each adapter factorizes a full projection update into two small
+        # matrices: A reduces the dimension and B projects it back.
+        self.lora_q_A = nn.Linear(self.embed_dim, rank, bias=False)
+        self.lora_q_B = nn.Linear(rank, self.embed_dim, bias=False)
 
-        # As in the LoRA paper: A starts randomly and B starts from zero.
-        # Therefore, the initial LoRA update BA is exactly zero.
-        nn.init.normal_(self.A.weight, mean=0.0, std=0.02)
-        nn.init.zeros_(self.B.weight)
+        self.lora_k_A = nn.Linear(self.embed_dim, rank, bias=False)
+        self.lora_k_B = nn.Linear(rank, self.embed_dim, bias=False)
 
-    def forward(self, x):
-        return self.B(self.A(x)) * self.scaling
+        self.lora_v_A = nn.Linear(self.embed_dim, rank, bias=False)
+        self.lora_v_B = nn.Linear(rank, self.embed_dim, bias=False)
+
+        # Initializing B to zero makes every LoRA update initially zero,
+        # preserving the pretrained model output at the start of tuning.
+        nn.init.normal_(self.lora_q_A.weight, mean=0.0, std=0.02)
+        nn.init.normal_(self.lora_k_A.weight, mean=0.0, std=0.02)
+        nn.init.normal_(self.lora_v_A.weight, mean=0.0, std=0.02)
+
+        nn.init.zeros_(self.lora_q_B.weight)
+        nn.init.zeros_(self.lora_k_B.weight)
+        nn.init.zeros_(self.lora_v_B.weight)
+
+    def forward(
+        self,
+        hidden_states: Optional[Tuple[torch.FloatTensor]],
+        layer_past: Optional[Tuple[torch.Tensor]] = None,
+        attention_mask: Optional[torch.FloatTensor] = None,
+        head_mask: Optional[torch.FloatTensor] = None,
+        encoder_hidden_states: Optional[torch.Tensor] = None,
+        encoder_attention_mask: Optional[torch.FloatTensor] = None,
+        use_cache: Optional[bool] = False,
+        output_attentions: Optional[bool] = False,
+    ) -> Tuple[Union[torch.Tensor, Tuple[torch.Tensor]], ...]:
+        # Preserve GPT-2 attention behavior and add the LoRA contribution
+        # immediately after the standard query, key, and value projections.
+        if encoder_hidden_states is not None:
+            if not hasattr(self, "q_attn"):
+                raise ValueError(
+                    "If class is used as cross attention, the weights `q_attn` have to be defined. "
+                    "Please make sure to instantiate class with `GPT2Attention(..., is_cross_attention=True)`."
+                )
+
+            query = self.q_attn(hidden_states)
+            key, value = self.c_attn(encoder_hidden_states).split(self.split_size, dim=2)
+            attention_mask = encoder_attention_mask
+
+            query = query + self.lora_q_B(self.lora_q_A(hidden_states)) * self.scaling
+            key = key + self.lora_k_B(self.lora_k_A(encoder_hidden_states)) * self.scaling
+            value = value + self.lora_v_B(self.lora_v_A(encoder_hidden_states)) * self.scaling
+        else:
+            query, key, value = self.c_attn(hidden_states).split(self.split_size, dim=2)
+
+            query = query + self.lora_q_B(self.lora_q_A(hidden_states)) * self.scaling
+            key = key + self.lora_k_B(self.lora_k_A(hidden_states)) * self.scaling
+            value = value + self.lora_v_B(self.lora_v_A(hidden_states)) * self.scaling
+
+        query = self._split_heads(query, self.num_heads, self.head_dim)
+        key = self._split_heads(key, self.num_heads, self.head_dim)
+        value = self._split_heads(value, self.num_heads, self.head_dim)
+
+        # Keep the standard GPT-2 cache path for compatibility, although
+        # caching is disabled during fine-tuning in functions.py.
+        if layer_past is not None:
+            past_key, past_value = layer_past
+            key = torch.cat((past_key, key), dim=-2)
+            value = torch.cat((past_value, value), dim=-2)
+
+        if use_cache is True:
+            present = (key, value)
+        else:
+            present = None
+
+        if self.reorder_and_upcast_attn:
+            attn_output, attn_weights = self._upcast_and_reordered_attn(query, key, value, attention_mask, head_mask)
+        else:
+            attn_output, attn_weights = self._attn(query, key, value, attention_mask, head_mask)
+
+        attn_output = self._merge_heads(attn_output, self.num_heads, self.head_dim)
+        attn_output = self.c_proj(attn_output)
+        attn_output = self.resid_dropout(attn_output)
+
+        outputs = (attn_output, present)
+        if output_attentions:
+            outputs += (attn_weights,)
+
+        return outputs
 
 
-class LoRAQKV(nn.Module):
-    def __init__(self, c_attn, hidden_size, rank, alpha):
-        super().__init__()
+# Start from Hugging Face GPT2LMHeadModel and replace every self-attention
+# module with the LoRA-enabled version while copying pretrained weights.
+class GPT2_LoRA(GPT2LMHeadModel):
+    def __init__(self, *model_args, rank, alpha, **model_kwargs):
+        super().__init__(*model_args, **model_kwargs)
 
-        # Hugging Face GPT-2 stores Q, K and V in one combined c_attn layer.
-        # Its frozen output has size 3 * hidden_size and is split afterwards.
-        self.c_attn = c_attn
-        self.lora_q = LoRA(hidden_size, hidden_size, rank, alpha)
-        self.lora_k = LoRA(hidden_size, hidden_size, rank, alpha)
-        self.lora_v = LoRA(hidden_size, hidden_size, rank, alpha)
-
-    def forward(self, x):
-        frozen_qkv = self.c_attn(x)
-
-        lora_q = self.lora_q(x)
-        lora_k = self.lora_k(x)
-        lora_v = self.lora_v(x)
-        lora_qkv = torch.cat([lora_q, lora_k, lora_v], dim=-1)
-
-        return frozen_qkv + lora_qkv
-
-
-class GPT2_LoRA(nn.Module):
-    def __init__(self, model_name="openai-community/gpt2", rank=4, alpha=32):
-        super().__init__()
-
-        self.model_name = model_name
         self.rank = rank
         self.alpha = alpha
 
-        self.model = GPT2LMHeadModel.from_pretrained(model_name)
-        self.model.config.pad_token_id = self.model.config.eos_token_id
-        self.model.config.use_cache = False
+        # strict=False loads the original attention weights while allowing
+        # the newly introduced LoRA matrices to keep their initialization.
+        for block in self.transformer.h:
+            custom_attn = CustomGPT2Attention( self.config, rank=rank, alpha=alpha, layer_idx=getattr(block.attn, "layer_idx", None) )
 
-        # Freeze every parameter loaded from the pre-trained GPT-2 model.
-        for parameter in self.model.parameters():
-            parameter.requires_grad = False
+            custom_attn.load_state_dict(block.attn.state_dict(), strict=False)
+            block.attn = custom_attn
 
-        # Add fresh trainable LoRA adapters to every self-attention block.
-        hidden_size = self.model.config.n_embd
-        for block in self.model.transformer.h:
-            block.attn.c_attn = LoRAQKV(c_attn=block.attn.c_attn, hidden_size=hidden_size, rank=rank, alpha=alpha)
+        # Freeze the pretrained GPT-2 parameters: only LoRA matrices are optimized.
+        for name, param in self.named_parameters():
+            param.requires_grad = "lora_" in name
 
-        self._check_trainable_parameters()
-
-    def _check_trainable_parameters(self):
-        unexpected = [
-            name
-            for name, parameter in self.named_parameters()
-            if parameter.requires_grad and ".lora_" not in name
-        ]
-
-        if unexpected:
-            raise RuntimeError(
-                "Only LoRA parameters should be trainable, but found: "
-                + ", ".join(unexpected)
-            )
-
-    def forward(self, input_ids, labels=None):
-        return self.model(input_ids=input_ids, labels=labels)
+    def forward(self, *args, **kwargs):
+        return super().forward(*args, **kwargs)
 
 
-def get_trainable_parameters(model):
-    return [parameter for parameter in model.parameters() if parameter.requires_grad]
-
-
-def count_parameters(model):
-    total = sum(parameter.numel() for parameter in model.parameters())
-    trainable = sum(
-        parameter.numel()
-        for parameter in model.parameters()
-        if parameter.requires_grad
-    )
+# Report the parameter reduction obtained by training only LoRA adapters.
+def param_stats(model):
+    total = sum(param.numel() for param in model.parameters())
+    trainable = sum(param.numel() for param in model.parameters() if param.requires_grad)
+    print(f"total params: {total:,}")
+    print(f"trainable params: {trainable:,}")
+    print(f"frozen params: {total - trainable:,}")
     return total, trainable
-
-
-def lora_state_dict(model):
-    return {
-        name: parameter.detach().cpu().clone()
-        for name, parameter in model.state_dict().items()
-        if ".lora_" in name
-    }
-
-
-def load_lora_state_dict(model, state_dict):
-    missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=False)
-
-    if unexpected_keys:
-        raise ValueError(f"Unexpected LoRA checkpoint keys: {unexpected_keys}")
-
-    # Missing keys are expected: the checkpoint intentionally stores only the
-    # small adapter tensors and reloads the frozen GPT-2 weights from Hugging Face.
-    return missing_keys

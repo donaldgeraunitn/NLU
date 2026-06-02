@@ -13,12 +13,14 @@ from tqdm.auto import tqdm
 from model import make_model
 from utils import IGNORE_INDEX
 
+# conll.py is a local helper used to compute the slot-filling F1 score.
 try:
     from conll import evaluate
 except ImportError:
     evaluate = None
 
 
+# Seed Python, NumPy and PyTorch for repeatable runs.
 def set_seed(seed):
     os.environ["PYTHONHASHSEED"] = str(seed)
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -29,17 +31,21 @@ def set_seed(seed):
         torch.cuda.manual_seed_all(seed)
 
 
+# Optimize the joint objective: intent-classification loss plus slot-filling loss.
 def train_loop(data, optimizer, criterion_slots, criterion_intents, model):
     model.train()
     loss_array = []
 
-    for batch in data:
+    batches = tqdm( data, desc="Training:", unit="batch", leave=False, dynamic_ncols=True, )
+    
+    for batch in batches:
         optimizer.zero_grad()  # Zeroing the gradient
 
         slots, intent = model(batch["utterances"], batch["attention_mask"])
         slots = slots.permute(0, 2, 1)  # We need this for computing the loss
 
         loss_intent = criterion_intents(intent, batch["intents"])
+        # Slot loss ignores padding, special tokens and unused sub-tokens marked with -100.
         loss_slot = criterion_slots(slots, batch["y_slots"])
         loss = loss_intent + loss_slot  # In joint training we sum the losses.
         loss_array.append(loss.item())
@@ -49,7 +55,8 @@ def train_loop(data, optimizer, criterion_slots, criterion_intents, model):
     return loss_array
 
 
-def eval_loop(data, criterion_slots, criterion_intents, model, lang):
+# Evaluate both tasks and decode only the aligned slot positions used for supervision.
+def eval_loop(data, criterion_slots, criterion_intents, model, lang, show_progress = True):
     if evaluate is None:
         raise ImportError(
             "conll.py was not found. Place the CoNLL evaluation script in the project folder."
@@ -65,11 +72,13 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     hyp_slots = []
 
     with torch.no_grad():  # It avoids the creation of the computational graph
-        for batch in data:
+        batches = tqdm(data, desc="Evaluating:", unit="batch") if show_progress else data
+        for batch in batches:
             slots, intents = model(batch["utterances"], batch["attention_mask"])
             slots = slots.permute(0, 2, 1)  # We need this for computing the loss
 
             loss_intent = criterion_intents(intents, batch["intents"])
+            # Use the same joint objective as training.
             loss_slot = criterion_slots(slots, batch["y_slots"])
             loss = loss_intent + loss_slot
             loss_array.append(loss.item())
@@ -100,6 +109,7 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
                 ref_slots.append(list(zip(words, gt_slots)))
                 hyp_slots.append(list(zip(words, out_slots)))
 
+    # CoNLL evaluation computes the entity-level slot-filling F1 score.
     try:
         results = evaluate(ref_slots, hyp_slots)
     except Exception as ex:
@@ -117,6 +127,7 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     return results, report_intent, loss_array
 
 
+# Store the best run checkpoint together with metadata needed for later reconstruction.
 def save_model(
     path,
     model,
@@ -147,6 +158,7 @@ def save_model(
     )
 
 
+# Keep loading compatible with PyTorch versions that do not expose weights_only.
 def load_checkpoint(path, device):
     try:
         return torch.load(path, map_location=device, weights_only=False)
@@ -154,6 +166,7 @@ def load_checkpoint(path, device):
         return torch.load(path, map_location=device)
 
 
+# Fine-tune one pretrained backbone run and select its checkpoint on development slot F1.
 def train_model(
     train_loader,
     dev_loader,
@@ -174,6 +187,7 @@ def train_model(
     eval_every=1,
 ):
     set_seed(seed)
+    # Each repeated run uses a new model seed and a matching deterministic shuffle order.
     if train_loader.generator is not None:
         train_loader.generator.manual_seed(seed)
 
@@ -187,6 +201,7 @@ def train_model(
     ).to(device)
 
     optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+    # Ignored sub-token positions do not affect the slot-filling objective.
     criterion_slots = nn.CrossEntropyLoss(ignore_index=IGNORE_INDEX)
     criterion_intents = nn.CrossEntropyLoss()
 
@@ -225,6 +240,7 @@ def train_model(
             f"Train Loss: {np.mean(train_loss):.4f}; Dev Loss: {np.mean(loss_dev):.4f}"
         )
 
+        # Reset patience and overwrite the checkpoint only when development slot F1 improves.
         if slot_f1 > best_f1:
             best_f1 = slot_f1
             current_patience = patience
@@ -245,6 +261,7 @@ def train_model(
         if current_patience <= 0:  # Early stopping with patience
             break
 
+    # Restore the best development checkpoint before the final test evaluation.
     checkpoint = load_checkpoint(checkpoint_path, device)
     model.load_state_dict(checkpoint["model"])
 
@@ -268,6 +285,7 @@ def train_model(
     }
 
 
+# Repeat training with consecutive seeds and aggregate test metrics across runs.
 def run(
     train_loader,
     dev_loader,
@@ -343,8 +361,16 @@ def run(
     return summary
 
 
+# Evaluate a submitted checkpoint without training after validating label mappings.
 def eval_model_saved(checkpoint_path, test_loader, lang, tokenizer, device):
     checkpoint = load_checkpoint(checkpoint_path, device)
+
+    if checkpoint["slot2id"] != lang.slot2id:
+        raise ValueError("The slot-label mapping does not match the saved checkpoint.")
+    if checkpoint["intent2id"] != lang.intent2id:
+        raise ValueError("The intent-label mapping does not match the saved checkpoint.")
+
+    # Recreate the correct wrapper and pretrained backbone from checkpoint metadata.
     model = make_model(
         model_type=checkpoint["model_type"],
         model_name=checkpoint["model_name"],
@@ -354,10 +380,11 @@ def eval_model_saved(checkpoint_path, test_loader, lang, tokenizer, device):
     ).to(device)
     model.load_state_dict(checkpoint["model"])
 
+    # Reuse the same loss definitions as during fine-tuning.
     criterion_slots = nn.CrossEntropyLoss(ignore_index=IGNORE_INDEX)
     criterion_intents = nn.CrossEntropyLoss()
 
-    results_test, intent_test, _ = eval_loop(
+    results_test, intent_test, losses_test = eval_loop(
         test_loader,
         criterion_slots,
         criterion_intents,
@@ -365,7 +392,13 @@ def eval_model_saved(checkpoint_path, test_loader, lang, tokenizer, device):
         lang,
     )
 
-    print("Slot F1:", results_test["total"]["f"])
-    print("Intent Accuracy:", intent_test["accuracy"])
+    print("\nTest results")
+    print("-" * 40)
+    print(f"Best epoch:      {checkpoint['epoch']}")
+    print(f"Dev slot F1:     {checkpoint['dev_slot_f1']:.4f}")
+    print(f"Dev intent acc:  {checkpoint['dev_intent_accuracy']:.4f}")
+    print(f"Test loss:       {np.mean(losses_test):.4f}")
+    print(f"Test slot F1:    {results_test['total']['f']:.4f}")
+    print(f"Test intent acc: {intent_test['accuracy']:.4f}")
 
     return results_test, intent_test

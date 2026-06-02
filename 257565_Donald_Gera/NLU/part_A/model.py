@@ -8,6 +8,8 @@ class MultiHeadAttention(nn.Module):
         super().__init__()
         assert d_model % n_heads == 0, "d_model must be divisible by n_heads"
 
+        # Split the embedding dimension across heads and scale dot products
+        # before softmax to keep attention scores numerically stable.
         self.n_heads = n_heads
         self.h_dim = d_model // n_heads
         self.scale = self.h_dim ** -0.5
@@ -29,6 +31,7 @@ class MultiHeadAttention(nn.Module):
         v = v.view(B, L, self.n_heads, self.h_dim).transpose(1, 2)
 
         similarity = (q @ k.transpose(-2, -1)) * self.scale
+        # Causal masking prevents each token from attending to future positions.
         similarity = similarity.masked_fill(mask == 0, float("-inf"))
 
         attn = F.softmax(similarity, dim=-1)
@@ -60,11 +63,13 @@ class TransformerBlock(nn.Module):
         self.ff = FeedForward(d_model, ff_dim)
 
     def forward(self, x, mask):
+        # Pre-layer normalization followed by residual connections.
         x = x + self.attn(self.ln1(x), mask)
         x = x + self.ff(self.ln2(x))
         return x
 
 
+# Decoder-only Transformer used jointly for token-level slots and sentence-level intents.
 class GPT2(nn.Module):
     def __init__(
         self,
@@ -81,6 +86,7 @@ class GPT2(nn.Module):
         super().__init__()
         self.pos_emb_size = pos_emb_size
 
+        # Learned token and position embeddings are summed before the Transformer blocks.
         self.token_embed = nn.Embedding(vocab_size, d_model)
         self.pos_embed = nn.Embedding(pos_emb_size, d_model)
 
@@ -94,9 +100,12 @@ class GPT2(nn.Module):
         # set dropout > 0 to activate dropout before both final output layers.
         self.output_dropout = nn.Dropout(dropout)
 
+        # Slot filling predicts one label per token; intent classification predicts
+        # one label from the final synthetic CLS representation.
         self.slot_out = nn.Linear(d_model, slots_size)
         self.intent_out = nn.Linear(d_model, n_intents)
 
+        # Register the lower-triangular causal mask as a non-trainable model buffer.
         mask = torch.tril(torch.ones(pos_emb_size, pos_emb_size)).unsqueeze(0).unsqueeze(0)
         self.register_buffer("mask", mask)
 

@@ -8,6 +8,7 @@ import torch.utils.data as data
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
 
+# Padding is ignored by the slot loss and used when batching variable-length sequences.
 PAD_TOKEN = 0
 
 
@@ -16,6 +17,7 @@ def load_data(path):
         return json.loads(f.read())
 
 
+# Read ATIS and derive a stratified development split from the provided train set.
 def load_dataset(dataset_dir="dataset/ATIS", dev_size=0.10, seed=42):
     tmp_train_raw = load_data(os.path.join(dataset_dir, "train.json"))
     test_raw = load_data(os.path.join(dataset_dir, "test.json"))
@@ -27,6 +29,7 @@ def load_dataset(dataset_dir="dataset/ATIS", dev_size=0.10, seed=42):
     inputs = []
     mini_train = []
 
+    # Singleton intents cannot be stratified, so they are added back to training.
     for id_y, y in enumerate(intents):
         if count_y[y] > 1:
             inputs.append(tmp_train_raw[id_y])
@@ -47,6 +50,7 @@ def load_dataset(dataset_dir="dataset/ATIS", dev_size=0.10, seed=42):
     return train_raw, dev_raw, test_raw
 
 
+# Store the mappings required to convert words, slot labels and intents to ids.
 class Lang:
     def __init__(self, words, intents, slots, cutoff=0, cls=True):
         self.word2id = self.w2id(words, cutoff=cutoff, unk=True, cls=cls)
@@ -58,6 +62,7 @@ class Lang:
         self.id2slot = {v: k for k, v in self.slot2id.items() if not cls or k != "cls"}
         self.id2intent = {v: k for k, v in self.intent2id.items()}
 
+    # Word vocabulary includes padding, unknown words and a synthetic CLS token.
     def w2id(self, elements, cutoff=None, unk=True, cls=True):
         vocab = {"pad": PAD_TOKEN}
         if unk:
@@ -71,6 +76,7 @@ class Lang:
                 vocab[k] = len(vocab)
         return vocab
 
+    # Slot CLS deliberately shares the padding id so that its loss is ignored.
     def lab2id(self, elements, pad=True, cls=True):
         vocab = {}
         if pad:
@@ -100,6 +106,7 @@ def build_lang(train_raw, dev_raw, test_raw, cutoff=0):
     return Lang(words, intents, slots, cutoff=cutoff)
 
 
+# Map raw ATIS records to integer sequences consumed by the model.
 class IntentsAndSlots(data.Dataset):
     def __init__(self, dataset, lang, unk="unk", cls="cls", add_cls=True):
         self.utterances = []
@@ -138,11 +145,14 @@ class IntentsAndSlots(data.Dataset):
             for x in seq.split():
                 tmp_seq.append(mapper[x] if x in mapper else mapper[self.unk])
             if self.add_cls:
+                # Append CLS to both utterance and slot sequences; the model uses the
+                # utterance CLS state for intent classification and ignores its slot loss.
                 tmp_seq.append(mapper[self.cls])
             res.append(tmp_seq)
         return res
 
 
+# Pad variable-length utterances and slot sequences to the longest item in the batch.
 def collate_fn(data, device):
     def merge(sequences):
         lengths = [len(seq) for seq in sequences]
@@ -166,6 +176,7 @@ def collate_fn(data, device):
     }
 
 
+# Build a single shared Lang object so every split uses identical mappings.
 def make_datasets(dataset_dir="dataset/ATIS", dev_size=0.10, seed=42):
     train_raw, dev_raw, test_raw = load_dataset(
         dataset_dir=dataset_dir,
@@ -201,6 +212,7 @@ def make_dataloaders(
         seed=data_seed,
     )
 
+    # Use a seeded generator only for the shuffled training loader.
     generator = torch.Generator()
     generator.manual_seed(seed)
 

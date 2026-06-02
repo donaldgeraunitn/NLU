@@ -3,11 +3,13 @@ import torch.nn as nn
 from transformers import AutoModel
 
 
+# GPT-2 is used as a causal backbone with separate token-level and utterance-level heads.
 class GPT2(nn.Module):
     def __init__(self, model_name, slots_size, n_intents, pad_token_id, dropout=0.1):
         super().__init__()
         self.encoder = AutoModel.from_pretrained(model_name)
         self.encoder.config.pad_token_id = pad_token_id
+        # Cached generation states are unnecessary during full-sequence fine-tuning.
         self.encoder.config.use_cache = False
 
         hidden_size = self.encoder.config.hidden_size
@@ -21,8 +23,10 @@ class GPT2(nn.Module):
             attention_mask=attention_mask,
         ).last_hidden_state
 
+        # Slot filling predicts one label for every tokenizer position.
         slots = self.slot_out(self.dropout(hidden_states))
 
+        # GPT-2 is causal: the final non-padding token has seen the complete utterance.
         last_token_positions = attention_mask.sum(dim=1) - 1
         batch_indexes = torch.arange(hidden_states.size(0), device=hidden_states.device)
         last_tokens = hidden_states[batch_indexes, last_token_positions]
@@ -31,6 +35,7 @@ class GPT2(nn.Module):
         return slots, intents
 
 
+# BERT uses the same two output heads but a bidirectional encoder representation.
 class BERT(nn.Module):
     def __init__(self, model_name, slots_size, n_intents, dropout=0.1):
         super().__init__()
@@ -47,12 +52,15 @@ class BERT(nn.Module):
             attention_mask=attention_mask,
         ).last_hidden_state
 
+        # Slot filling predicts one label for every tokenizer position.
         slots = self.slot_out(self.dropout(hidden_states))
+        # BERT uses the [CLS] hidden state as the utterance representation.
         intents = self.intent_out(self.dropout(hidden_states[:, 0]))
 
         return slots, intents
 
 
+# Instantiate the wrapper matching the model selected from the CLI or checkpoint.
 def make_model(model_type, model_name, slots_size, n_intents, tokenizer, dropout=0.1):
     if model_type == "gpt2":
         return GPT2(

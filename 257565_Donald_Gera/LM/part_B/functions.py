@@ -10,9 +10,11 @@ import torch
 import torch.optim as optim
 from tqdm.auto import tqdm
 
-from model import *
+from model import GPT2_LoRA, param_stats
 
 
+# Seed Python, NumPy, and PyTorch to make comparisons between LoRA
+# configurations as reproducible as possible.
 def set_seed(seed):
     os.environ["PYTHONHASHSEED"] = str(seed)
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -28,12 +30,15 @@ def set_seed(seed):
     torch.backends.cudnn.benchmark = False
 
 
+# Perplexity is the exponential of the average language-model loss.
 def get_ppl(loss):
     if loss >= 50:
         return float("inf")
     return float(math.exp(loss))
 
 
+# Train for one epoch. GPT2LMHeadModel performs the causal label shift
+# internally when labels are passed to its forward method.
 def train_loop(data, optimizer, model, tokenizer):
     model.train()
     loss_array = []
@@ -41,14 +46,16 @@ def train_loop(data, optimizer, model, tokenizer):
     
     pbar = tqdm(data, desc="Training:", unit="batch", total=len(data))
 
-    for i, (input_ids, _, n_tokens) in enumerate(pbar):
+    for i, (input_ids, attention_mask, n_tokens) in enumerate(pbar):
         optimizer.zero_grad() # Zeroing the gradient
-        # we don't shift the labels to the left, the model manages it internally
+        # We do not shift labels manually: GPT2LMHeadModel manages it internally.
         labels = input_ids.clone().detach()
-        # we cannot specify ignore_index, so we replace our pad tokens with -100
-        # -100 be ignored by default when the model computes the performance
-        labels[labels == tokenizer.pad_token_id] = -100
-        output = model(input_ids, labels=labels)
+        # Ignore only padded positions. The pad token and EOS token can share the
+        # same id in GPT-2, so the attention mask is safer than comparing token ids.
+        labels[attention_mask == 0] = -100
+        output = model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
+        # Weight each batch loss by its number of valid tokens so batches
+        # with different amounts of padding contribute correctly.
         loss_array.append(output.loss.item() * n_tokens)
         number_of_tokens.append(n_tokens)
         output.loss.backward() # Compute the gradient, deleting the computational graph
@@ -60,6 +67,7 @@ def train_loop(data, optimizer, model, tokenizer):
     return sum(loss_array)/sum(number_of_tokens)
 
 
+# Evaluate without gradient tracking using the same masked LM loss as training.
 def eval_loop(data, model, tokenizer):
     model.eval()
     loss_array = []
@@ -68,17 +76,21 @@ def eval_loop(data, model, tokenizer):
     with torch.no_grad():
         pbar = tqdm(data, desc="Evaluating:", unit="batch", total=len(data))
 
-        for input_ids, _, n_tokens in pbar:
+        for input_ids, attention_mask, n_tokens in pbar:
             labels = input_ids.clone().detach()
-            labels[labels == tokenizer.pad_token_id] = -100
-
-            output = model(input_ids, labels=labels)
-
+            labels[attention_mask == 0] = -100
+            output = model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
             loss_array.append(output.loss.item() * n_tokens)
             number_of_tokens.append(n_tokens)
 
-    loss = sum(loss_array) / sum(number_of_tokens)
+    loss = sum(loss_array)/sum(number_of_tokens)
     return get_ppl(loss), loss
+
+
+# Store a detached CPU copy so the best state is independent of later updates
+# and can be saved without keeping GPU tensors alive.
+def model_state_on_cpu(model):
+    return {key: value.detach().cpu().clone() for key, value in model.state_dict().items()}
 
 
 def train(
@@ -98,28 +110,17 @@ def train(
 ):
     set_seed(seed)
 
-    train_loader, dev_loader, _ = make_dataloaders_fn(
-        tokenizer=tokenizer,
-        device=device,
-        train_batch_size=train_batch_size,
-        eval_batch_size=eval_batch_size,
-        seed=seed,
-    )
+    train_loader, dev_loader, _ = make_dataloaders_fn(tokenizer=tokenizer, device=device, train_batch_size=train_batch_size, eval_batch_size=eval_batch_size, seed=seed)
 
-    model = GPT2_LoRA(model_name=model_name, rank=rank, alpha=alpha).to(device)
+    # Load pretrained GPT-2, inject LoRA adapters, and disable cache because
+    # cached activations are unnecessary during full-sequence fine-tuning.
+    model = GPT2_LoRA.from_pretrained(model_name, rank=rank, alpha=alpha).to(device)
+    model.config.pad_token_id = tokenizer.pad_token_id
+    model.config.use_cache = False
 
-    optimizer = optim.AdamW(
-        get_trainable_parameters(model),
-        lr=learning_rate,
-        weight_decay=weight_decay,
-    )
-
-    total_parameters, trainable_parameters = count_parameters(model)
-    trainable_percentage = 100.0 * trainable_parameters / total_parameters
-
-    print(f"Total parameters:     {total_parameters:,}")
-    print(f"Trainable parameters: {trainable_parameters:,}")
-    print(f"Trainable percentage: {trainable_percentage:.4f}%")
+    # GPT2_LoRA freezes the backbone, so AdamW receives adapter parameters only.
+    total_parameters, trainable_parameters = param_stats(model)
+    optimizer = optim.AdamW(filter(lambda param: param.requires_grad, model.parameters()), lr=learning_rate, weight_decay=weight_decay)
 
     losses_train = []
     losses_dev = []
@@ -141,15 +142,14 @@ def train(
         losses_dev.append(float(loss_dev))
 
         pbar.set_description("PPL: %f" % ppl_dev)
-        print(
-            f"epoch={epoch:03d} | train_loss={loss_train:.4f} | "
-            f"dev_loss={loss_dev:.4f} | dev_ppl={ppl_dev:.2f}"
-        )
+        print(f"epoch={epoch:03d} | train_loss={loss_train:.4f} | dev_loss={loss_dev:.4f} | dev_ppl={ppl_dev:.2f}")
 
+        # Select checkpoints only on development perplexity. The test split
+        # is not used to decide when to stop training.
         if best_model_state is None or ppl_dev < best_ppl:
             best_ppl = ppl_dev
             best_epoch = epoch
-            best_model_state = lora_state_dict(model)
+            best_model_state = model_state_on_cpu(model)
             remaining_patience = patience
         else:
             remaining_patience -= 1
@@ -158,7 +158,8 @@ def train(
             print(f"Early stopping at epoch {epoch}.")
             break
 
-    load_lora_state_dict(model, best_model_state)
+    # Restore the best development-set state before test evaluation.
+    model.load_state_dict(best_model_state)
 
     history = {
         "sampled_epochs": sampled_epochs,
@@ -168,67 +169,31 @@ def train(
         "best_ppl": float(best_ppl),
         "total_parameters": int(total_parameters),
         "trainable_parameters": int(trainable_parameters),
-        "trainable_percentage": float(trainable_percentage),
+        "trainable_percentage": float(100.0 * trainable_parameters / total_parameters),
     }
 
     return model, history, best_model_state
 
 
-def evaluate_model(
-    model,
-    tokenizer,
-    make_dataloaders_fn,
-    device,
-    eval_batch_size=16,
-    seed=42,
-):
+# Evaluate an already-built model on the held-out test split.
+def evaluate(model, tokenizer, make_dataloaders_fn, device, eval_batch_size=16, seed=42):
     set_seed(seed)
-
-    _, _, test_loader = make_dataloaders_fn( tokenizer=tokenizer, device=device, train_batch_size=eval_batch_size, eval_batch_size=eval_batch_size, seed=seed )
-
+    _, _, test_loader = make_dataloaders_fn(tokenizer=tokenizer, device=device, train_batch_size=eval_batch_size, eval_batch_size=eval_batch_size, seed=seed)
     return eval_loop(test_loader, model, tokenizer)
 
 
-def evaluate(
-    model_name,
-    rank,
-    alpha,
-    adapter_state,
-    tokenizer,
-    make_dataloaders_fn,
-    device,
-    eval_batch_size=16,
-    seed=42,
-):
-    model = GPT2_LoRA(model_name=model_name, rank=rank, alpha=alpha).to(device)
-    load_lora_state_dict(model, adapter_state)
-
-    test_ppl, test_loss = evaluate_model(model=model, tokenizer=tokenizer, make_dataloaders_fn=make_dataloaders_fn, device=device, eval_batch_size=eval_batch_size, seed=seed )
-    return model, test_ppl, test_loss
-
-
-def evaluate_checkpoint(
-    checkpoint_path,
-    tokenizer,
-    make_dataloaders_fn,
-    device,
-    eval_batch_size=16,
-):
+# Rebuild a saved LoRA configuration, restore its state, and evaluate it.
+# This is the path used by main.py when --eval is specified.
+def evaluate_checkpoint(checkpoint_path, tokenizer, make_dataloaders_fn, device, eval_batch_size=16):
     checkpoint = torch.load(checkpoint_path, map_location="cpu")
     model_config = checkpoint["model_config"]
 
-    _, test_ppl, test_loss = evaluate(
-        model_name=model_config["model_name"],
-        rank=model_config["rank"],
-        alpha=model_config["alpha"],
-        adapter_state=checkpoint["adapter_state_dict"],
-        tokenizer=tokenizer,
-        make_dataloaders_fn=make_dataloaders_fn,
-        device=device,
-        eval_batch_size=eval_batch_size,
-        seed=checkpoint.get("seed", 42),
-    )
+    model = GPT2_LoRA.from_pretrained(model_config["model_name"], rank=model_config["rank"], alpha=model_config["alpha"]).to(device)
+    model.config.pad_token_id = tokenizer.pad_token_id
+    model.config.use_cache = False
+    model.load_state_dict(checkpoint["model_state_dict"])
 
+    test_ppl, test_loss = evaluate(model=model, tokenizer=tokenizer, make_dataloaders_fn=make_dataloaders_fn, device=device, eval_batch_size=eval_batch_size, seed=checkpoint.get("seed", 42))
     return checkpoint, test_ppl, test_loss
 
 
@@ -254,7 +219,10 @@ def run(
 
     results = []
     best = None
+    checkpoint_path = output_dir / "best_model.pt"
 
+    # Test every requested rank/alpha pair. Development perplexity chooses
+    # the checkpoint that is retained as output_dir/best_model.pt.
     for rank in rank_values:
         for alpha in alpha_values:
             print("\n" + "=" * 80)
@@ -262,37 +230,11 @@ def run(
             print(f"LoRA scaling alpha / rank: {alpha / rank:.4f}")
             print("=" * 80)
 
-            model, history, model_state = train(
-                model_name=model_name,
-                rank=rank,
-                alpha=alpha,
-                tokenizer=tokenizer,
-                make_dataloaders_fn=make_dataloaders_fn,
-                learning_rate=learning_rate,
-                device=device,
-                seed=seed,
-                train_batch_size=train_batch_size,
-                eval_batch_size=eval_batch_size,
-                n_epochs=n_epochs,
-                patience=patience,
-                weight_decay=weight_decay,
-            )
-
-            test_ppl, test_loss = evaluate_model(
-                model=model,
-                tokenizer=tokenizer,
-                make_dataloaders_fn=make_dataloaders_fn,
-                device=device,
-                eval_batch_size=eval_batch_size,
-                seed=seed,
-            )
+            model, history, model_state = train(model_name=model_name, rank=rank, alpha=alpha, tokenizer=tokenizer, make_dataloaders_fn=make_dataloaders_fn, learning_rate=learning_rate, device=device, seed=seed, train_batch_size=train_batch_size, eval_batch_size=eval_batch_size, n_epochs=n_epochs, patience=patience, weight_decay=weight_decay)
+            test_ppl, test_loss = evaluate(model=model, tokenizer=tokenizer, make_dataloaders_fn=make_dataloaders_fn, device=device, eval_batch_size=eval_batch_size, seed=seed)
 
             history_path = output_dir / f"history_rank_{rank}_alpha_{alpha}.png"
-            plot_history(
-                history,
-                history_path,
-                title=f"rank={rank}, alpha={alpha}",
-            )
+            plot_history(history, history_path, title=f"rank={rank}, alpha={alpha}")
 
             result = {
                 "rank": int(rank),
@@ -312,44 +254,36 @@ def run(
             print(f"Dev PPL:  {result['dev_ppl']:.2f}")
             print(f"Test PPL: {result['test_ppl']:.2f}")
 
-            if best is None or result["dev_ppl"] < best["result"]["dev_ppl"]:
-                best = {
-                    "result": result,
-                    "adapter_state": model_state,
-                }
+            # Overwrite the saved checkpoint only when development PPL improves.
+            if best is None or result["dev_ppl"] < best["dev_ppl"]:
+                best = result
+                torch.save(
+                    {
+                        "model_class": "GPT2_LoRA",
+                        "model_config": {
+                            "model_name": model_name,
+                            "rank": int(rank),
+                            "alpha": int(alpha),
+                        },
+                        "model_state_dict": model_state,
+                        "seed": int(seed),
+                        "selection_metric": "dev_ppl",
+                        "dev_ppl": float(result["dev_ppl"]),
+                        "test_ppl": float(result["test_ppl"]),
+                    },
+                    checkpoint_path,
+                )
 
             del model
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
 
+    # Record whether the selected model satisfies the exercise requirements.
     requirements = {
-        "ppl_below_250": bool(best["result"]["test_ppl"] < 250.0),
+        "ppl_below_250": bool(best["test_ppl"] < 250.0),
         "part_a_ppl": None if part_a_ppl is None else float(part_a_ppl),
-        "ppl_lower_than_part_a": (
-            None
-            if part_a_ppl is None
-            else bool(best["result"]["test_ppl"] < part_a_ppl)
-        ),
+        "ppl_lower_than_part_a": None if part_a_ppl is None else bool(best["test_ppl"] < part_a_ppl),
     }
-
-    checkpoint_path = output_dir / "best_model.pt"
-    torch.save(
-        {
-            "model_class": "GPT2_LoRA",
-            "model_config": {
-                "model_name": model_name,
-                "rank": int(best["result"]["rank"]),
-                "alpha": int(best["result"]["alpha"]),
-            },
-            "adapter_state_dict": best["adapter_state"],
-            "seed": int(seed),
-            "selection_metric": "dev_ppl",
-            "dev_ppl": float(best["result"]["dev_ppl"]),
-            "test_ppl": float(best["result"]["test_ppl"]),
-            "requirements": requirements,
-        },
-        checkpoint_path,
-    )
 
     tuning_plot_path = output_dir / "rank_alpha_tuning.png"
     plot_tuning_results(results, tuning_plot_path)
@@ -374,7 +308,7 @@ def run(
         "results": results,
         "requirements": requirements,
         "best": {
-            **best["result"],
+            **best,
             "selection_metric": "dev_ppl",
             "model_path": str(checkpoint_path),
             "tuning_plot": str(tuning_plot_path),
@@ -385,6 +319,7 @@ def run(
     return report
 
 
+# Save train/dev loss curves for one rank-alpha configuration.
 def plot_history(history, output_path, title):
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -401,6 +336,7 @@ def plot_history(history, output_path, title):
     plt.close()
 
 
+# Compare development perplexity across ranks, with one curve per alpha value.
 def plot_tuning_results(results, output_path):
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -409,16 +345,8 @@ def plot_tuning_results(results, output_path):
 
     plt.figure()
     for alpha in alpha_values:
-        alpha_results = sorted(
-            [result for result in results if result["alpha"] == alpha],
-            key=lambda result: result["rank"],
-        )
-        plt.plot(
-            [result["rank"] for result in alpha_results],
-            [result["dev_ppl"] for result in alpha_results],
-            marker="o",
-            label=f"alpha={alpha}",
-        )
+        alpha_results = sorted([result for result in results if result["alpha"] == alpha], key=lambda result: result["rank"])
+        plt.plot([result["rank"] for result in alpha_results], [result["dev_ppl"] for result in alpha_results], marker="o", label=f"alpha={alpha}")
 
     plt.xlabel("rank")
     plt.ylabel("dev perplexity")
@@ -429,6 +357,7 @@ def plot_tuning_results(results, output_path):
     plt.close()
 
 
+# Save both a machine-readable JSON report and a compact text summary.
 def save_report(report, output_path):
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -444,10 +373,7 @@ def save_report(report, output_path):
         f.write(f"device: {report['device']}\n")
         f.write(f"rank_values: {report['rank_values']}\n")
         f.write(f"alpha_values: {report['alpha_values']}\n")
-        f.write(
-            "fixed_training_hyperparameters: "
-            f"{report['fixed_training_hyperparameters']}\n\n"
-        )
+        f.write(f"fixed_training_hyperparameters: {report['fixed_training_hyperparameters']}\n\n")
 
         f.write("Results:\n")
         for result in report["results"]:

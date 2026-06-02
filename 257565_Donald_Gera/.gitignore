@@ -1,0 +1,7 @@
+
+# Ignore generated experiment outputs
+**/outputs/
+**/outputs_large/
+
+# Ignore saved model checkpoints
+**/bin/

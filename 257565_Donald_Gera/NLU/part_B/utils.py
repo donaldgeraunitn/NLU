@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer
 
+# Padding, special tokens and unused sub-tokens must not contribute to the slot loss.
 IGNORE_INDEX = -100
 
 
@@ -17,6 +18,7 @@ def load_data(path):
         return json.loads(f.read())
 
 
+# Create a stratified development split while keeping singleton intents in training.
 def load_dataset(dataset_dir="dataset/ATIS", dev_size=0.10, seed=42):
     tmp_train_raw = load_data(os.path.join(dataset_dir, "train.json"))
     test_raw = load_data(os.path.join(dataset_dir, "test.json"))
@@ -48,6 +50,7 @@ def load_dataset(dataset_dir="dataset/ATIS", dev_size=0.10, seed=42):
     return train_raw, dev_raw, test_raw
 
 
+# Pretrained tokenizers provide token IDs, so only task-specific label mappings are needed.
 class Lang:
     def __init__(self, intents, slots):
         self.slot2id = self.lab2id(slots)
@@ -78,6 +81,7 @@ def build_lang(train_raw, dev_raw, test_raw):
     return Lang(intents, slots)
 
 
+# Preserve raw words and slot labels until collation because tokenizers may split words.
 class IntentsAndSlots(data.Dataset):
     def __init__(self, dataset, lang):
         self.utterances = []
@@ -120,6 +124,7 @@ def make_datasets(dataset_dir="dataset/ATIS", dev_size=0.10, seed=42):
     return train_dataset, dev_dataset, test_dataset, lang, train_raw, dev_raw, test_raw
 
 
+# Use fast tokenizers because word_ids() is required for word-to-sub-token alignment.
 def make_tokenizer(model_type, model_name):
     if model_type == "gpt2":
         tokenizer = AutoTokenizer.from_pretrained(
@@ -127,6 +132,7 @@ def make_tokenizer(model_type, model_name):
             use_fast=True,
             add_prefix_space=True,
         )
+        # GPT-2 has no padding token by default; EOS is reused for padded positions.
         tokenizer.pad_token = tokenizer.eos_token
     elif model_type == "bert":
         tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
@@ -139,10 +145,8 @@ def make_tokenizer(model_type, model_name):
     return tokenizer
 
 
-def _align_slot_labels(slot_labels, word_ids, slot2id, model):
-    if strategy not in {"first", "last"}:
-        raise ValueError(f"Unsupported alignment strategy: {strategy}")
-
+# Assign one supervised slot position per original word and ignore all other sub-tokens.
+def _align_slot_labels(slot_labels, word_ids, slot2id, strategy):
     aligned_labels = []
 
     for idx, word_id in enumerate(word_ids):
@@ -150,6 +154,7 @@ def _align_slot_labels(slot_labels, word_ids, slot2id, model):
             aligned_labels.append(IGNORE_INDEX)
             continue
 
+        # BERT uses the first sub-token; causal GPT-2 uses the last sub-token of each word.
         if strategy == "first":
             selected = idx == 0 or word_ids[idx - 1] != word_id
         else:
@@ -163,12 +168,14 @@ def _align_slot_labels(slot_labels, word_ids, slot2id, model):
     return aligned_labels
 
 
+# Keep the decoded word sequence consistent with tokenizer truncation.
 def _truncate_words(words, word_ids):
     valid_word_ids = [word_id for word_id in word_ids if word_id is not None]
     n_words = 0 if not valid_word_ids else max(valid_word_ids) + 1
     return words[:n_words]
 
 
+# BERT inserts its own special tokens and supervises the first sub-token of each word.
 def _collate_bert(batch, tokenizer, lang, device, max_length):
     utterances = [sample["utterance"] for sample in batch]
     encoded = tokenizer(utterances, is_split_into_words=True, padding=True, truncation=True, max_length=max_length, return_tensors="pt", )
@@ -196,6 +203,7 @@ def _collate_bert(batch, tokenizer, lang, device, max_length):
     }
 
 
+# GPT-2 appends EOS explicitly, supervises last sub-tokens and is padded manually.
 def _collate_gpt2(batch, tokenizer, lang, device, max_length):
     encoded_batch = []
     max_batch_length = 0
@@ -209,6 +217,7 @@ def _collate_gpt2(batch, tokenizer, lang, device, max_length):
             max_length=max_length - 1,
         )
 
+        # EOS becomes the final representation used by the GPT-2 intent classifier.
         input_ids = encoded["input_ids"] + [tokenizer.eos_token_id]
         attention_mask = [1] * len(input_ids)
         word_ids = encoded.word_ids() + [None]
@@ -226,6 +235,7 @@ def _collate_gpt2(batch, tokenizer, lang, device, max_length):
         )
         max_batch_length = max(max_batch_length, len(input_ids))
 
+    # Initialize padded tensors; ignored labels remain -100 outside supervised positions.
     utterances = torch.full( (len(batch), max_batch_length), tokenizer.pad_token_id, dtype=torch.long, )
     attention_mask = torch.zeros((len(batch), max_batch_length), dtype=torch.long)
     y_slots = torch.full(
@@ -252,6 +262,7 @@ def _collate_gpt2(batch, tokenizer, lang, device, max_length):
     }
 
 
+# Dispatch to the backbone-specific alignment strategy.
 def collate_fn(batch, tokenizer, lang, model_type, device, max_length=50):
     if model_type == "bert":
         return _collate_bert(batch, tokenizer, lang, device, max_length)
@@ -260,6 +271,7 @@ def collate_fn(batch, tokenizer, lang, model_type, device, max_length=50):
     raise ValueError(f"Unsupported model type: {model_type}")
 
 
+# Keep the data split fixed with data_seed while seed controls the shuffled training order.
 def make_dataloaders(device, model_type, model_name, dataset_dir="dataset/ATIS", train_batch_size=32, eval_batch_size=64, seed=42, data_seed=None, dev_size=0.10, max_length=50):
     if data_seed is None:
         data_seed = seed

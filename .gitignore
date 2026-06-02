@@ -1,3 +1,14 @@
+# Generated experiment outputs: ignore everything by default
+**/outputs/**
+
+# Preserve subdirectories so selected files can be included
+!**/outputs/**/
+
+# Keep the best checkpoint and its report for each experiment
+!**/outputs/**/best_model.pt
+!**/outputs/**/report.json
+!**/outputs/**/report.txt
+
 # Python
 __pycache__/
 *.pyc
@@ -7,6 +18,9 @@ __pycache__/
 
 # Local helper scripts
 get_best.py
+
+# Local backup folders
+Final/
 
 # LaTeX source files: keep only final PDFs
 **/report_template/*.tex

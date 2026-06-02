@@ -21,6 +21,7 @@ except ImportError:
     conll_evaluate = None
 
 
+# Seed Python, NumPy and PyTorch to make experiments reproducible.
 def set_seed(seed):
     os.environ["PYTHONHASHSEED"] = str(seed)
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -44,6 +45,7 @@ def init_weights(mat):
                 m.bias.data.fill_(0.01)
 
 
+# Train for one epoch using the joint intent-classification and slot-filling loss.
 def train_loop(data, optimizer, criterion_slots, criterion_intents, model):
     model.train()
     loss_array = []
@@ -72,7 +74,8 @@ def normalize_slot_label(label):
     return label
 
 
-def eval_loop(data, criterion_slots, criterion_intents, model, lang):
+# Evaluate both tasks and convert predictions back to labels for CoNLL slot scoring.
+def eval_loop(data, criterion_slots, criterion_intents, model, lang, show_progress = True):
     if conll_evaluate is None:
         raise ImportError("conll.py was not found. Copy conll.py into the project folder.")
 
@@ -85,8 +88,9 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
     ref_slots = []
     hyp_slots = []
 
-    with torch.no_grad():
-        for batch in data:
+    with torch.no_grad(): 
+        batches = tqdm(data, desc="Evaluating:", unit="batch") if show_progress else data
+        for batch in batches:
             slots, intents = model(batch["utterances"], batch["slots_len"])
             slots = slots.permute(0, 2, 1)  # We need this for computing the loss
 
@@ -95,13 +99,13 @@ def eval_loop(data, criterion_slots, criterion_intents, model, lang):
             loss = loss_intent + loss_slot
             loss_array.append(loss.item())
 
-            # Intent inference
+            # Intent inference: use the class with the highest sentence-level score.
             out_intents = [lang.id2intent[x] for x in torch.argmax(intents, dim=1).tolist()]
             gt_intents = [lang.id2intent[x] for x in batch["intents"].tolist()]
             ref_intents.extend(gt_intents)
             hyp_intents.extend(out_intents)
 
-            # Slot inference
+            # Slot inference: ignore the final synthetic CLS position and padding.
             output_slots = torch.argmax(slots, dim=1)
             for id_seq, seq in enumerate(output_slots):
                 length = batch["slots_len"].tolist()[id_seq] - 1  # Ignore CLS
@@ -136,6 +140,7 @@ def get_intent_accuracy(intent_report):
     return float(intent_report.get("accuracy", 0.0))
 
 
+# The development metric used for model selection is configurable from the CLI.
 def score_for_selection(slot_f1, intent_acc, selection_metric="slot_f1"):
     if selection_metric == "average":
         return (slot_f1 + intent_acc) / 2.0
@@ -227,6 +232,7 @@ def valid_model_config(model_config):
     return model_config["d_model"] % model_config["n_heads"] == 0
 
 
+# Rebuild a model from a state dictionary and evaluate one dataset split.
 def evaluate_state(
     model_cls,
     model_config,
@@ -261,6 +267,72 @@ def evaluate_state(
     }
 
 
+def eval_model_saved(
+    model_cls,
+    make_dataloaders_fn,
+    checkpoint_path,
+    device,
+    dataset_dir="dataset/ATIS",
+    eval_batch_size=64,
+):
+    """
+    Load a saved checkpoint and evaluate it on the test set without training.
+    """
+    checkpoint_path = Path(checkpoint_path)
+    if not checkpoint_path.is_file():
+        raise FileNotFoundError(f"Checkpoint not found: {checkpoint_path}")
+
+    # The checkpoint stores both the weights and the architecture needed to rebuild the model.
+    checkpoint = torch.load(checkpoint_path, map_location=device)
+
+    required_keys = {"model_state_dict", "model_config"}
+    missing_keys = required_keys - checkpoint.keys()
+    if missing_keys:
+        raise ValueError(
+            f"Checkpoint {checkpoint_path} is missing required keys: "
+            f"{sorted(missing_keys)}"
+        )
+
+    seed = int(checkpoint.get("seed", 42))
+    data_seed = int(checkpoint.get("data_seed", 42))
+    set_seed(seed)
+
+    _, _, test_loader, lang, _, _, _ = make_dataloaders_fn(
+        device=device,
+        dataset_dir=dataset_dir,
+        train_batch_size=1,
+        eval_batch_size=eval_batch_size,
+        seed=seed,
+        data_seed=data_seed,
+    )
+
+    # Evaluation is valid only if token, slot and intent mappings match training.
+    if "lang" in checkpoint and checkpoint["lang"] != lang.to_dict():
+        raise ValueError(
+            "The language mappings rebuilt from the dataset do not match the "
+            "mappings stored in the checkpoint. Check the dataset and data seed."
+        )
+
+    metrics = evaluate_state(
+        model_cls=model_cls,
+        model_config=checkpoint["model_config"],
+        model_state=checkpoint["model_state_dict"],
+        data_loader=test_loader,
+        lang=lang,
+        device=device,
+    )
+
+    print("\nTest results")
+    print("-" * 40)
+    print(f"Test loss:       {metrics['loss']:.4f}")
+    print(f"Test slot F1:    {metrics['slot_f1']:.4f}")
+    print(f"Test intent acc: {metrics['intent_acc']:.4f}")
+    print(f"Model config:    {checkpoint['model_config']}")
+    print(f"Checkpoint:      {checkpoint_path}")
+
+    return metrics
+
+
 def train(
     model_cls,
     model_config,
@@ -291,6 +363,7 @@ def train(
 
     set_seed(seed)
 
+    # Build the fixed split, vocabulary and dataloaders before creating the model.
     train_loader, dev_loader, test_loader, lang, _, _, _ = make_dataloaders_fn(
         device=device,
         dataset_dir=dataset_dir,
@@ -308,6 +381,7 @@ def train(
     ).to(device)
     model.apply(init_weights)
 
+    # Slot padding positions are ignored, while each utterance contributes one intent label.
     optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
     criterion_slots = nn.CrossEntropyLoss(ignore_index=PAD_TOKEN)
     criterion_intents = nn.CrossEntropyLoss()
@@ -335,6 +409,7 @@ def train(
         )
         train_loss = float(np.asarray(train_losses).mean())
 
+        # Validation is intentionally sampled every `eval_every` epochs.
         should_validate = epoch % eval_every == 0 or epoch == n_epochs
         if not should_validate:
             pbar.set_postfix(
@@ -363,6 +438,7 @@ def train(
         losses_train.append(train_loss)
         losses_dev.append(dev_loss)
 
+        # Early stopping follows the selected development metric, never the test set.
         if best_model_state is None or current_score > best_score:
             best_score = current_score
             best_slot_f1 = slot_f1
@@ -417,6 +493,7 @@ def train(
     history_plot = output_dir / "history.png"
     plot_history(history, history_plot, title=f"seed={seed}")
 
+    # Each run keeps its own checkpoint; tuning later copies the best one to best_model.pt.
     checkpoint_path = output_dir / "model.pt"
     torch.save(
         {
@@ -491,6 +568,7 @@ def tune(
     candidate_results = []
     best_candidate_internal = None
 
+    # Train every candidate independently; repeated runs use consecutive model seeds.
     for value in candidate_values:
         model_config = dict(base_model_config)
         learning_rate = base_learning_rate
@@ -545,6 +623,7 @@ def tune(
             )
             run_results.append(run)
 
+        # Aggregate repeated runs before comparing candidate configurations.
         dev_summary = {
             "slot_f1": mean_std([run["dev_slot_f1"] for run in run_results]),
             "intent_acc": mean_std([run["dev_intent_acc"] for run in run_results]),
@@ -591,6 +670,7 @@ def tune(
     best_runs = best_candidate_internal["runs"]
 
     # Keep a convenient copy of the best individual checkpoint from the winning candidate.
+    # This is the file that should be transferred to the submission `bin/` folder.
     best_run = max(best_runs, key=lambda run: run["selection_score"])
     best_model_path = output_dir / "best_model.pt"
     shutil.copy2(best_run["checkpoint_path"], best_model_path)
