@@ -32,7 +32,6 @@ The root launcher is the recommended entry point. The following commands are equ
 ```bash
 cd LM/part_A
 python main.py --eval --checkpoint bin/best_model.pt
-cd ../..
 ```
 
 ### LM - Part B
@@ -40,7 +39,6 @@ cd ../..
 ```bash
 cd LM/part_B
 python main.py --eval --checkpoint bin/best_model.pt
-cd ../..
 ```
 
 ### NLU - Part A
@@ -48,23 +46,13 @@ cd ../..
 ```bash
 cd NLU/part_A
 python main.py --eval --checkpoint bin/best_model.pt
-cd ../..
 ```
 
-### NLU - Part B: BERT
+### NLU - Part B
 
 ```bash
 cd NLU/part_B
-python main.py --eval --model bert --checkpoint bin/bert/best_model.pt
-cd ../..
-```
-
-### NLU - Part B: GPT-2
-
-```bash
-cd NLU/part_B
-python main.py --eval --model gpt2 --checkpoint bin/gpt2/best_model.pt
-cd ../..
+python main.py --eval --model bert --checkpoint bin/best_model.pt
 ```
 
 Run the manual commands from the indicated part directory because dataset paths are relative to each project part.
